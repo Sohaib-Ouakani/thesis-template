@@ -1,3 +1,4 @@
+% !TEX root = thesis-main.tex
 \documentclass[12pt,a4paper,openright,twoside]{book}
 \usepackage[utf8]{inputenc}
 \usepackage{disi-thesis}
@@ -7,103 +8,210 @@
 \usepackage{acronym}
 
 \school{\unibo}
-\programme{Corso di Laurea [Magistrale?] in Ingegneria e Scienze Informatiche}
+\programme{Corso di Laurea in Ingegneria e Scienze Informatiche}
 \title{Fancy Title}
 \author{Candidate Name}
 \date{\today}
-\subject{Supervisor's course name}
+\subject{Nome del corso del relatore}
 \supervisor{Prof. Supervisor Here}
-\cosupervisor{Dott. CoSupervisor 1}
-\morecosupervisor{Dott. CoSupervisor 2}
+% \cosupervisor{Dott. CoSupervisor 1}       % uncomment if needed
+% \morecosupervisor{Dott. CoSupervisor 2}   % uncomment if needed
 \session{I}
-\academicyear{2022-2023}
+\academicyear{2024-2025}
 
 % Definition of acronyms
-\acrodef{IoT}{Internet of Thing}
-\acrodef{vm}[VM]{Virtual Machine}
+\acrodef{fmi}[FMI]{Functional Mock-up Interface}
+\acrodef{fmu}[FMU]{Functional Mock-up Unit}
+\acrodef{kmp}[KMP]{Kotlin Multiplatform}
+\acrodef{api}[API]{Application Programming Interface}
+\acrodef{ci}[CI]{Continuous Integration}
+\acrodef{cd}[CD]{Continuous Delivery}
+\acrodef{rest}[REST]{Representational State Transfer}
+\acrodef{ui}[UI]{User Interface}
+\acrodef{me}[ME]{Model Exchange}
+\acrodef{cs}[CS]{Co-Simulation}
+\acrodef{jvm}[JVM]{Java Virtual Machine}
+\acrodef{cio}[CIO]{Coroutine-based I/O}
 
-
-\mainlinespacing{1.241} % line spacing in mainmatter, comment to default (1)
+\mainlinespacing{1.241}
 
 \begin{document}
 
 \frontmatter\frontispiece
 
-\begin{abstract}	
-Max 2000 characters, strict.
+\begin{abstract}
+% Max 2000 caratteri. Struttura consigliata: Contesto, Problema/Obiettivi, Metodi/Contributo, Risultati, Conclusioni.
 \end{abstract}
 
-\begin{dedication} % this is optional
-Optional. Max a few lines.
-\end{dedication}
+% \begin{dedication}
+% Opzionale. Poche righe al massimo.
+% \end{dedication}
 
 %----------------------------------------------------------------------------------------
-\tableofcontents   
-\listoffigures     % (optional) comment if empty
-\lstlistoflistings % (optional) comment if empty
+\tableofcontents
+\listoffigures        % (optional) commentare se vuota
+\lstlistoflistings    % (optional) commentare se vuota
 %----------------------------------------------------------------------------------------
 
 \mainmatter
 
 %----------------------------------------------------------------------------------------
-\chapter{Introduction}
+\chapter{Introduzione}
 \label{chap:introduction}
 %----------------------------------------------------------------------------------------
 
-Write your intro here.
-\sidenote{Add sidenotes in this way. They are named after the author of the thesis}
+\section{Contesto e motivazione}
+\label{sec:intro-contesto}
 
-You can use acronyms that your defined previously,
-such as \ac{IoT}.
-%
-If you use acronyms twice,
-they will be written in full only once
-(indeed, you can mention the \ac{IoT} now without it being fully explained).
-%
-In some cases, you may need a plural form of the acronym.
-%
-For instance,
-that you are discussing \acp{vm},
-you may need both \ac{vm} and \acp{vm}.
+\section{Obiettivi del progetto}
+\label{sec:intro-obiettivi}
 
-\paragraph{Structure of the Thesis}
+\section{Struttura della tesi}
+\label{sec:intro-struttura}
 
-\note{At the end, describe the structure of the paper}
+%----------------------------------------------------------------------------------------
+\chapter{Background}
+\label{chap:background}
+%----------------------------------------------------------------------------------------
 
-\chapter{State of the art}
+\section{Lo standard FMI e il formato FMU}
+\label{sec:background-fmi}
 
-I suggest referencing stuff as follows: \cref{fig:random-image} or \Cref{fig:random-image}
+\subsection{Functional Mock-up Interface (FMI 2.0)}
+\label{subsec:background-fmi-standard}
 
-\begin{figure}
-    \centering
-    \includegraphics[width=.8\linewidth]{figures/random-image.pdf}
-    \caption{Some random image}
-    \label{fig:random-image}
-\end{figure}
+\subsection{Struttura di un file FMU e modalità operative}
+\label{subsec:background-fmu-struttura}
 
-\section{Some cool topic}
+\section{Kotlin Multiplatform}
+\label{sec:background-kmp}
 
-\chapter{Contribution}
+\subsection{Architettura expect/actual e compilazione nativa}
+\label{subsec:background-kmp-expect-actual}
 
-You may also put some code snippet (which is NOT float by default), eg: \cref{lst:random-code}.
+\subsection{Interoperabilità con C tramite cinterop}
+\label{subsec:background-kmp-cinterop}
 
-\lstinputlisting[float,language=Java,label={lst:random-code}]{listings/HelloWorld.java}
+\section{Tecnologie adottate}
+\label{sec:background-tecnologie}
 
-\section{Fancy formulas here}
+\subsection{FMILib}
+\label{subsec:background-fmilib}
+
+\subsection{Ktor}
+\label{subsec:background-ktor}
+
+\subsection{Compose Multiplatform}
+\label{subsec:background-compose}
+
+\section{Strumenti di processo}
+\label{sec:background-strumenti}
+
+\subsection{Pipeline CI/CD con GitHub Actions}
+\label{subsec:background-cicd}
+
+\subsection{Gradle e gestione multimodulo}
+\label{subsec:background-gradle}
+
+%----------------------------------------------------------------------------------------
+\chapter{Analisi}
+\label{chap:analisi}
+%----------------------------------------------------------------------------------------
+
+\section{Obiettivi}
+\label{sec:analisi-obiettivi}
+
+\section{Requisiti funzionali}
+\label{sec:analisi-funzionali}
+
+\section{Requisiti non funzionali}
+\label{sec:analisi-nonfunzionali}
+
+\section{Modello del dominio}
+\label{sec:analisi-dominio}
+
+%----------------------------------------------------------------------------------------
+\chapter{Design}
+\label{chap:design}
+%----------------------------------------------------------------------------------------
+
+\section{Architettura generale e struttura}
+\label{sec:design-architettura}
+
+\section{Modulo \texttt{fmilib}: integrazione della libreria C nativa}
+\label{sec:design-fmilib}
+
+\section{Modulo \texttt{fmu-kt}}
+\label{sec:design-fmukt}
+
+\subsection{Astrazione \texttt{FmuPreprocessor} e factory multipiattaforma}
+\label{subsec:design-preprocessor}
+
+\subsection{\texttt{NativeFmiWrapper}: ciclo di vita, metadati e simulazione}
+\label{subsec:design-wrapper}
+
+\subsection{\texttt{DefaultFmu} come API di alto livello}
+\label{subsec:design-defaultfmu}
+
+\section{Modulo \texttt{backend}: architettura del server e routing REST}
+\label{sec:design-backend}
+
+\section{Modulo \texttt{frontend}: struttura della UI e comunicazione con il backend}
+\label{sec:design-frontend}
+
+%----------------------------------------------------------------------------------------
+\chapter{Implementazione}
+\label{chap:implementazione}
+%----------------------------------------------------------------------------------------
+
+\section{Binding C/Kotlin e configurazione del linker per piattaforma}
+\label{sec:impl-binding}
+
+\section{Gestione del ciclo di vita dell'FMU}
+\label{sec:impl-lifecycle}
+
+\section{Estrazione dei metadati e gestione delle variabili}
+\label{sec:impl-metadati}
+
+\section{Esecuzione della simulazione}
+\label{sec:impl-simulazione}
+
+\section{Ricompilazione degli FMU su macOS ARM64}
+\label{sec:impl-macos}
+
+%----------------------------------------------------------------------------------------
+\chapter{Valutazione}
+\label{chap:valutazione}
+%----------------------------------------------------------------------------------------
+
+\section{Test unitari e di integrazione}
+\label{sec:val-test}
+
+\section{Copertura multipiattaforma nella CI}
+\label{sec:val-ci}
+
+%----------------------------------------------------------------------------------------
+\chapter{Conclusioni e Sviluppi Futuri}
+\label{chap:conclusioni}
+%----------------------------------------------------------------------------------------
+
+\section{Obiettivi raggiunti}
+\label{sec:conclusioni-obiettivi}
+
+
+\section{Sviluppi futuri}
+\label{sec:conclusioni-futuro}
 
 %----------------------------------------------------------------------------------------
 % BIBLIOGRAPHY
 %----------------------------------------------------------------------------------------
-
 \backmatter
-
-\nocite{*} % Remove this as soon as you have the first citation
-
+\nocite{*} % Rimuovere appena si ha la prima citazione
 \bibliographystyle{alpha}
 \bibliography{bibliography}
 
-\begin{acknowledgements} % this is optional
-Optional. Max 1 page.
-\end{acknowledgements}
+% \begin{acknowledgements}
+% Opzionale. Max 1 pagina.
+% \end{acknowledgements}
 
 \end{document}
