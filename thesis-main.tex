@@ -74,6 +74,24 @@
 \label{chap:background}
 %----------------------------------------------------------------------------------------
 
+\section{Sviluppo di applicazioni full stack monolinguaggio}
+\label{sec:background-fullstack}
+
+\subsection{Panoramica delle soluzioni esistenti e loro limiti}
+\label{subsec:background-fullstack-soluzioni}
+
+\subsection{Il portabilità e integrazione con librerie native}
+\label{subsec:background-fullstack-gap}
+
+\section{Kotlin e framework multitarget come risposta al gap}
+\label{sec:background-multitarget}
+
+\subsection{Kotlin Multiplatform}
+\label{subsec:background-kmp}
+
+\subsection{Interoperabilità con C tramite cinterop}
+\label{subsec:background-kmp-cinterop}
+
 \section{Lo standard FMI e il formato FMU}
 \label{sec:background-fmi}
 
@@ -83,42 +101,12 @@
 \subsection{Struttura di un file FMU e modalità operative}
 \label{subsec:background-fmu-struttura}
 
-\section{Kotlin Multiplatform}
-\label{sec:background-kmp}
-
-\subsection{Architettura expect/actual e compilazione nativa}
-\label{subsec:background-kmp-expect-actual}
-
-\subsection{Interoperabilità con C tramite cinterop}
-\label{subsec:background-kmp-cinterop}
-
-\section{Tecnologie adottate}
-\label{sec:background-tecnologie}
-
-\subsection{FMILib}
-\label{subsec:background-fmilib}
-
-\subsection{Ktor}
-\label{subsec:background-ktor}
-
-\subsection{Compose Multiplatform}
-\label{subsec:background-compose}
-
-\section{Strumenti di processo}
-\label{sec:background-strumenti}
-
-\subsection{Pipeline CI/CD con GitHub Actions}
-\label{subsec:background-cicd}
-
-\subsection{Gradle e gestione multimodulo}
-\label{subsec:background-gradle}
-
 %----------------------------------------------------------------------------------------
 \chapter{Analisi}
 \label{chap:analisi}
 %----------------------------------------------------------------------------------------
 
-\section{Obiettivi}
+\section{Obiettivi e vincoli}
 \label{sec:analisi-obiettivi}
 
 \section{Requisiti funzionali}
@@ -130,34 +118,26 @@
 \section{Modello del dominio}
 \label{sec:analisi-dominio}
 
+
 %----------------------------------------------------------------------------------------
 \chapter{Design}
 \label{chap:design}
 %----------------------------------------------------------------------------------------
 
-\section{Architettura generale e struttura}
+\section{Architettura generale}
 \label{sec:design-architettura}
 
-\section{Modulo \texttt{fmilib}: integrazione della libreria C nativa}
-\label{sec:design-fmilib}
+\section{Design di dettaglio}
+\label{sec:design-dettaglio}
 
-\section{Modulo \texttt{fmu-kt}}
-\label{sec:design-fmukt}
+\subsection{Interfacciamento con librerie native}
+\label{subsec:design-native}
 
-\subsection{Astrazione \texttt{FmuPreprocessor} e factory multipiattaforma}
-\label{subsec:design-preprocessor}
+\subsection{Backend multipiattaforma}
+\label{subsec:design-backend}
 
-\subsection{\texttt{NativeFmiWrapper}: ciclo di vita, metadati e simulazione}
-\label{subsec:design-wrapper}
-
-\subsection{\texttt{DefaultFmu} come API di alto livello}
-\label{subsec:design-defaultfmu}
-
-\section{Modulo \texttt{backend}: architettura del server e routing REST}
-\label{sec:design-backend}
-
-\section{Modulo \texttt{frontend}: struttura della UI e comunicazione con il backend}
-\label{sec:design-frontend}
+\subsection{Frontend multipiattaforma}
+\label{subsec:design-frontend}
 
 %----------------------------------------------------------------------------------------
 \chapter{Implementazione}
@@ -179,6 +159,9 @@
 \section{Ricompilazione degli FMU su macOS ARM64}
 \label{sec:impl-macos}
 
+\section{Strumenti di processo: Gradle, CI/CD e pipeline multipiattaforma}
+\label{sec:impl-processo}
+
 %----------------------------------------------------------------------------------------
 \chapter{Valutazione}
 \label{chap:valutazione}
@@ -195,12 +178,14 @@
 \label{chap:conclusioni}
 %----------------------------------------------------------------------------------------
 
-\section{Obiettivi raggiunti}
-\label{sec:conclusioni-obiettivi}
-
+\section{Limitazioni}
+\label{sec:conclusioni-limitazioni}
 
 \section{Sviluppi futuri}
 \label{sec:conclusioni-futuro}
+
+\section{Conclusioni}
+\label{sec:conclusioni-conclusioni}
 
 %----------------------------------------------------------------------------------------
 % BIBLIOGRAPHY
