@@ -1,9 +1,30 @@
 \chapter{Background}
 \label{chap:background}
 
+
 \section{Sviluppo di applicazioni full stack monolinguaggio}
 \label{sec:background-fullstack}
-\cite{2pkt-jelia2021} \cite{agentbasedxai-aamas2020}
+Prima di addentrarci nella descrizione del background del progetto è importante definire in maniera corretta cosa sono le applicazioni \textbf{full stack} e le differenze che emergono tra lo sviluppo di esse e quello di applicazioni più tradizionali.
+Le componenti delle applicazioni vengono divise in due macrocategorie
+\begin{itemize}
+    \item \textbf{Frontend}: in questa sezione dell'applicativo sono gestiti tutti gli aspetti
+    inerenti all'interfaccia utente: sia quelli legati all'aspetto grafico che quelli legati alla 
+    logica di interazione con essa.
+    \item \textbf{Backend}: in questa sezione invece sono gestiti tutti gli aspetti legati\\
+    all'esecuzione delle funzionalità dell'applicazione, inclusa l'elaborazione dei dati, la loro
+    memorizzazione e la comunicazione con altre applicazioni se necessario. 
+\end{itemize}
+Le applicazioni \textit{full stack} dunque, comprendono entrambe le componenti.
+Lo sviluppo di questo tipo di applicazioni può includere l'utilizzo di molteplici linguaggi in base alle necessità, impiegando linguaggi progettati per lo sviluppo del backend e altri per il frontend.
+Tuttavia questa distinzione al giorno d'oggi viene gradualmente smussata, infatti diversi linguaggi inizialmente progettati per l'utilizzo in una sola area, vengono poi estesi anche all'altra.
+L'esempio più rilevante e dominante al giorno d'oggi è \textbf{JavaScript}, il quale inizialmente nasce come linguaggio per i browser, quindi dedicato al \textit{frontend}, per poi evolversi oltre i confini del browser permettendone l'esecuzione anche sui server. 
+Questo permette dunque la creazione di applicativi \textit{full stack} monolinguaggio, una tendenza sempre più diffusa.
+Tra i vantaggi che essa comporta vi sono l'utilizzo di un solo linguaggio per tutto lo stack, il quale porta a una minore curva di apprendimento e una maggiore efficienza per quanto riguarda l'impiego di programmatori.
+Uno dei più grandi limiti dello sviluppo \textit{full stack} è l'interazione con librerie e API
+native, infatti linguaggi come JavaScript sono noti per avere meccanismi limitati o comunque ostici per interagire con il codice nativo.
+In seguito verranno discusse in dettaglio le soluzioni esistenti per la programmazione di
+tale tipo di applicativi e i loro limiti, per poi analizzare il problema della portabilità e
+dell'integrazione con le librerie native.
 
 \subsection{Panoramica delle soluzioni esistenti e loro limiti}
 \label{subsec:background-fullstack-soluzioni}
@@ -17,7 +38,7 @@
 \subsection{Kotlin Multiplatform}
 \label{subsec:background-kmp}
 
-\subsection{Interoperabilità con C tramite cinterop}
+\subsection{Interoperabilità con C tramite Cinterop}
 \label{subsec:background-kmp-cinterop}
 
 \section{Lo standard FMI e il formato FMU}

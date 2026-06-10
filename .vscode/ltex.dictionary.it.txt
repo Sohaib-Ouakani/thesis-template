@@ -1,0 +1,7 @@
+monolinguaggio
+stack
+backened
+macrocategorie
+client
+Multiplatform
+Cinterop

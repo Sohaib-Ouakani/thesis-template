@@ -1,0 +1,10 @@
+{
+    "editor.rulers": [
+        100,
+    ],
+    "ltex.language": "it",
+
+    "[latex]": {
+        "editor.wordWrap": "on"
+    }
+}
