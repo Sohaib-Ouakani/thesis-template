@@ -28,8 +28,21 @@ dell'integrazione con le librerie native.
 
 \subsection{Panoramica delle soluzioni esistenti e loro limiti}
 \label{subsec:background-fullstack-soluzioni}
+Come anticipato in precedenza, esistono diversi linguaggi impiegati per la programmazione di app \textit{full stack} monolinguaggio.
+Il più popolare attualmente risulta essere JavaScript \cite{stackoverflow2025}, questo per via dello sviluppo della tecnologia \textbf{Node.js}; infatti questo permette di portare l'ambiente di esecuzione di JavaScript fuori dai browser web.
+Inoltre anche la creazione di TypeScript, una diretta evoluzione di JavaScript, contribuì alla crescita di questo tipo di linguaggi.
+Tutti questi fattori rendono JavaScript una delle scelte più gettonate per la creazione di software \textit{full stack}, impiegando diversi stack come Next.js, framework sviluppato da Vercel, e lo stack MEAN, il quale consiste in Mongo DB, Express.js e Angular come framework per il backend e frontend rispettivamente, il tutto legato da Node.js.
+Nonostante il grande supporto in termini di librerie e framework per questo tipo di tecnologia, l'integrazione con le librerie native risulta comunque ardua per via delle peculiarità del linguaggio.
+Esistono anche soluzioni basate su linguaggi eseguiti su \textit{Java Virtual Machine}, come Java e Kotlin. Per questi esistono framework maturi sia per il backend, come Ktor, che per il frontend, come Vaadin. Tuttavia queste soluzioni rimangono legate all'ecosistema JVM, il che pone vincoli sulla portabilità verso alcune piattaforme target.
+Nonostante le differenze tra queste soluzioni, emerge un limite comune: l'integrazione con librerie native risulta in tutti i casi problematica, come verrà analizzato nella sezione seguente.
 
-\subsection{Il portabilità e integrazione con librerie native}
+
+%Ad esempio per poter interagire con una libreria C++, Node.js mette a disposizione \textbf{N-API}, una libreria di C++ creata appositamente per fare da ponte tra la libreria C++ che si vuole utilizzare e l'ambiente di esecuzione Node.js \cite{nodejs_napi}.
+%Questo però contraddice direttamente la filosofia dello sviluppo \textit{full stack} monolinguaggio, rendendo necessario per lo sviluppatore conoscere linguaggi come C++ per poter scrivere il collante tra la libreria nativa e JavaScript.
+%Altre opzioni per lo sviluppo \textit{full stack} le troviamo ad esempio anche con Python, che al contrario di Node.js presenta varie soluzioni per interagire con il nativo, approccio però che aumenta la frammentazione e spesso coinvolge la scrittura di codice in altri linguaggi per la compilazione nativa, oppure scrittura di codice per tradurre le API a Python.
+
+
+\subsection{La portabilità e integrazione con librerie native}
 \label{subsec:background-fullstack-gap}
 
 \section{Kotlin e framework multitarget come risposta al gap}

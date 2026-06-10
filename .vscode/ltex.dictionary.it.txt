@@ -5,3 +5,11 @@ macrocategorie
 client
 Multiplatform
 Cinterop
+Mongo
+Flutter
+Dart
+Virtual
+Machine
+Ktor
+Vaadin
+Vercel
