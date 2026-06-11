@@ -1,12 +1,45 @@
 \chapter{Analisi}
 \label{chap:analisi}
+Il presente capitolo descrive i requisiti funzionali del sistema e il modello del dominio, con particolare attenzione alle entità coinvolte e ai vincoli che ne regolano il comportamento. Il progetto nasce come prototipo universitario autonomo, sviluppato in risposta a un'esigenza concreta sollevata da aziende operanti in ambito ingegneristico e della simulazione — tra cui Dallara — che necessitano di unificare le tecnologie impiegate nello sviluppo degli applicativi interni. Il sistema realizzato mira a dimostrare la fattibilità di un'unica base di codice Kotlin Multiplatform per backend nativo, libreria \ac{fmi} e frontend, eliminando la frammentazione tecnologica attualmente diffusa in tale contesto.
 
 
 \section{Requisiti}
-\label{sec:analisi-requsiti}
+\label{sec:analisi-requisiti}
+Di seguito sono elencati i requisiti funzionali del sistema, ovvero le capacità che il sistema deve offrire all'utente o ai componenti che con esso interagiscono.
+\begin{enumerate}
+\item \textbf{Caricamento di un file \ac{fmu}}: Il sistema deve consentire il caricamento di un file nel formato \ac{fmu} (\texttt{.fmu}) tramite interfaccia web. Il file deve essere validato (estensione, formato) e salvato.
+\item \textbf{Inizializzazione del modello}: Il sistema deve consentire l'inizializzazione del modello \ac{fmu} precedentemente caricato attraverso l'utilizzo di una libreria nativa, per poi visualizzarne i metadati.
+\item \textbf{Ispezione dei metadati}: Il sistema deve esporre le informazioni descrittive del modello \ac{fmu} caricato, tra cui: nome del modello, autore, versione dello standard \ac{fmi}, tipo di \ac{fmu} (Co-Simulation o Model Exchange), parametri dell'esperimento di default (istante di inizio, fine e passo), e lista delle variabili con la relativa unità di misura.
+\item \textbf{Esecuzione della simulazione}: Il sistema deve consentire di avviare una simulazione Co-Simulation sul modello caricato, accettando in input una configurazione (istante di inizio, istante di fine, passo di integrazione, e lista di variabili di output).
+\item \textbf{Visualizzazione dei risultati}: Il frontend deve presentare i risultati della simulazione in forma grafica, tramite grafici a linea che rappresentino\\ l'andamento temporale delle variabili selezionate.
+\item \textbf{Selezione delle variabili di output}: L'utente deve poter selezionare un sottoinsieme delle variabili disponibili da includere nell'output della simulazione.
+\item \textbf{Ricompilazione di \ac{fmu} con sorgenti (macOS)}: Su piattaforma macOS ARM64, il sistema deve essere in grado di ricompilare \ac{fmu} che includono i file sorgente C, producendo una libreria universale compatibile con le architetture \texttt{arm64} e \texttt{x86-64}.
+\item \textbf{Pulizia delle risorse}: Al termine del ciclo di vita del server, il sistema deve liberare le risorse allocate (file temporanei, librerie native) in modo sicuro e deterministico.
+\end{enumerate}
 
 \section{Modello del dominio}
 \label{sec:analisi-dominio}
+Il dominio applicativo ruota attorno alla gestione e all'esecuzione di modelli \ac{fmu},
+il cui formato e le cui modalità operative sono stati descritti nel
+Capitolo~\ref{chap:background}. In questa sezione si descrivono le entità del dominio
+dal punto di vista del sistema realizzato, senza riprendere i dettagli dello standard
+già trattati.
+
+Le entità principali del dominio sono le seguenti.
+
+La \textbf{\ac{fmu} service} rappresenta l'entità che gestisce il modello di simulazione nel suo stato di utilizzo all'interno del sistema. A differenza della sua definizione astratta come formato di scambio, qui l'\ac{fmu} è caratterizzata da un ciclo di vita concreto: può trovarsi nello stato \emph{non caricata}, \emph{caricata} (libreria nativa in memoria e file XML analizzato) o \emph{pronta per la simulazione}. Il sistema gestisce un'unica \ac{fmu} alla volta; il caricamento di un nuovo file invalida lo stato precedente.
+
+\textbf{Configurazione di simulazione} raccoglie i parametri necessari per avviare un esperimento: l'istante di inizio (\texttt{startTime}), l'istante di fine (\texttt{stopTime}), il passo di integrazione (\texttt{stepSize}), e la lista delle variabili di output desiderate. Se quest'ultima è omessa, il \textit{simulation manager} registra automaticamente tutte le variabili disponibili nel modello.
+
+\textbf{Risultato di simulazione} è la risposta prodotta dall'esecuzione di un esperimento. Contiene la sequenza degli istanti temporali campionati e, per ciascuna variabile richiesta, la corrispondente serie di valori reali. Include inoltre la configurazione che ha originato la simulazione, per garantire tracciabilità.
+
+\textbf{\ac{fmu} Info} rappresenta le informazioni ricavate dal file \ac{fmu} una volta che è stato caricato il modello correttamente attraverso l'utilizzo della libreria nativa.
+
+\textbf{Wrapper \ac{fmi}} è il componente che funge da confine tra il mondo Kotlin e la libreria nativa C. Espone le operazioni fondamentali del ciclo di vita \ac{fmi} --- inizializzazione, avanzamento del passo, lettura delle variabili di output, termine --- nascondendo al resto del sistema i dettagli dell'interoperabilità con codice nativo tramite la \ac{ffi} di Kotlin/Native. Dunque rappresenta un entità che avvolge la libreria nativa esponendo al resto dell'applicativo solo aspetti di più alto livello, nascondendo l'utilizzo delle \ac{api} della libreria nativa agli altri componenti.
+
+\textbf{Preprocessore} è un componente specifico per piattaforma, interposto prima del caricamento della libreria nativa. La sua introduzione non era pianificata inizialmente: è emersa come necessità concreta durante lo sviluppo su macOS ARM64, dove le \ac{fmu} disponibili per i test non includevano binari precompilati per tale architettura. Il preprocessore si occupa in questo caso di ricompilare il modello a partire dai sorgenti C inclusi nell'archivio \ac{fmu}. Su Linux e Windows il preprocessore non svolge alcuna operazione, risultando trasparente al resto del sistema.
+
+\textbf{Gestore delle risorse} ha la responsabilità di gestire il ciclo di vita dei file sul filesystem: salva il file \ac{fmu} caricato dall'utente, ne mantiene i percorsi (file originale, directory di estrazione, directory dei modelli compilati) e provvede alla pulizia al termine della sessione.
 
 \subsection{Vincoli}
 \label{sec:analisi-vincoli}
