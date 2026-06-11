@@ -20,8 +20,7 @@ Tuttavia questa distinzione al giorno d'oggi viene gradualmente smussata, infatt
 L'esempio più rilevante e dominante al giorno d'oggi è \textbf{JavaScript}, il quale inizialmente nasce come linguaggio per i browser, quindi dedicato al \textit{frontend}, per poi evolversi oltre i confini del browser permettendone l'esecuzione anche sui server. 
 Questo permette dunque la creazione di applicativi \textit{full stack} monolinguaggio, una tendenza sempre più diffusa.
 Tra i vantaggi che essa comporta vi sono l'utilizzo di un solo linguaggio per tutto lo stack, il quale porta a una minore curva di apprendimento e una maggiore efficienza per quanto riguarda l'impiego di programmatori.
-Uno dei più grandi limiti dello sviluppo \textit{full stack} è l'interazione con librerie e API
-native, infatti linguaggi come JavaScript sono noti per avere meccanismi limitati o comunque ostici per interagire con il codice nativo.
+Uno dei più grandi limiti dello sviluppo \textit{full stack} è l'interazione con librerie e \ac{api} native, infatti linguaggi come JavaScript sono noti per avere meccanismi limitati o comunque ostici per interagire con il codice nativo.
 In seguito verranno discusse in dettaglio le soluzioni esistenti per la programmazione di
 tale tipo di applicativi e i loro limiti, per poi analizzare il problema della portabilità e
 dell'integrazione con le librerie native.
@@ -33,8 +32,9 @@ Il più popolare attualmente risulta essere JavaScript \cite{stackoverflow2025},
 Inoltre anche la creazione di TypeScript, una diretta evoluzione di JavaScript, contribuì alla crescita di questo tipo di linguaggi.
 Tutti questi fattori rendono JavaScript una delle scelte più gettonate per la creazione di software \textit{full stack}, impiegando diversi stack come Next.js, framework sviluppato da Vercel, e lo stack MEAN, il quale consiste in Mongo DB, Express.js e Angular come framework per il backend e frontend rispettivamente, il tutto legato da Node.js.
 Nonostante il grande supporto in termini di librerie e framework per questo tipo di tecnologia, l'integrazione con le librerie native risulta comunque ardua per via delle peculiarità del linguaggio.
-Esistono anche soluzioni basate su linguaggi eseguiti su \textit{Java Virtual Machine}, come Java e Kotlin. Per questi esistono framework maturi sia per il backend, come Ktor, che per il frontend, come Vaadin. Tuttavia queste soluzioni rimangono legate all'ecosistema JVM, il che pone vincoli sulla portabilità verso alcune piattaforme target.
-Nonostante le differenze tra queste soluzioni, emerge un limite comune: l'integrazione con librerie native risulta in tutti i casi problematica, come verrà analizzato nella sezione seguente.
+Emerge dunque un limite comune: l'integrazione con librerie native risulta problematica, come verrà analizzato nella sezione seguente.
+
+%Esistono anche soluzioni basate su linguaggi eseguiti su \textit{Java Virtual Machine}, come Java e Kotlin. Per questi esistono framework maturi sia per il backend, come Ktor, che per il frontend, come Vaadin. Tuttavia queste soluzioni rimangono legate all'ecosistema \ac{jvm}, il che pone vincoli sulla portabilità verso alcune piattaforme target.
 
 
 %Ad esempio per poter interagire con una libreria C++, Node.js mette a disposizione \textbf{N-API}, una libreria di C++ creata appositamente per fare da ponte tra la libreria C++ che si vuole utilizzare e l'ambiente di esecuzione Node.js \cite{nodejs_napi}.
@@ -44,15 +44,41 @@ Nonostante le differenze tra queste soluzioni, emerge un limite comune: l'integr
 
 \subsection{La portabilità e integrazione con librerie native}
 \label{subsec:background-fullstack-gap}
+Per librerie native si in intendono tutte le librerie compilate in linguaggio macchina specifico per un architettura. Queste espongono delle \textbf{ABI} (application binary interface) ovvero delle interfacce applicative che comunicano direttamente con il sistema operativo a livello di linguaggio macchina.
+Tra i linguaggi che vengono compilati in codice macchina figurano, C, C++, Rust e Zig; questi spesso vengono utilizzati per la realizzazione di programmi che hanno necessità di accedere direttamente all'hardware sottostante, oppure per sviluppare librerie che implementano alcuni standard. Quest'ultimo caso è il più rilevante per la tesi, infatti l'applicativo realizzato per questa tesi interagisce con dei file aderenti allo standard \ac{fmi}, il quale verrà approfondito in seguito nella sezione dedicata.
+
+Diverse delle soluzioni menzionate nella sezione precedente, richiedono la scrittura di codice collante tra il proprio applicativo e le librerie native in caso si vogliano utilizzare.
+Nel caso più rilevante, ovvero JavaScript, se si necessita di interagire con librerie scritte in C++, è necessario utilizzare una libreria C++ denominata \textbf{Node-API}. Tale libreria verrà poi utilizzata per creare moduli che fungono da collante tra JavaScript e la libreria nativa, infatti questo modulo sarà responsabile delle chiamate alla libreria nativa \cite{nodejs_napi}.
+Questa soluzione permette dunque l'integrazione con questo tipo di librerie, ma contraddice direttamente il principio dietro lo sviluppo \textit{full stack monolinguaggio}, rendendo necessaria la scrittura di codice in linguaggi al di fuori di quello usato per la realizzazione dell'applicativo.
+Da questa analisi emerge un pattern ricorrente: le soluzioni \textit{full stack monolinguaggio} più mature non sono state costruite attorno all'interoperabilità nativa come requisito principale.
+Le soluzioni legate a questi linguaggi dunque richiedono di violare il principio del monolinguaggio per interagire con le librerie native.
+Questo limite non dipende da aspetti implementativi risolvibili con nuove librerie, bensì una conseguenza strutturale basata sulla natura del linguaggio scelto.
+Dunque una reale soluzione richiederebbe un approccio diverso fin dalla scelta del linguaggio, rendendo necessario l'impiego di un linguaggio \textbf{multitarget}.
 
 \section{Kotlin e framework multitarget come risposta al gap}
 \label{sec:background-multitarget}
 
+Alla luce delle limitazioni analizzate nella sezione precedente — in particolare la difficoltà di integrare librerie native C in ambienti JavaScript e la necessità di ricorrere a strati di collante eterolinguistici — questa sezione presenta Kotlin Multiplatform come risposta tecnologicamente motivata a tale gap. L'obiettivo non è descrivere la tecnologia in modo esaustivo, ma illustrare perché le sue caratteristiche architetturali si adattano al problema in esame.
+
 \subsection{Kotlin Multiplatform}
 \label{subsec:background-kmp}
 
+Kotlin nasce nel 2011 come linguaggio sviluppato da JetBrains con l'obiettivo di modernizzare lo sviluppo sulla \ac{jvm}: sintassi più concisa, sistema di tipi con null safety integrata e piena interoperabilità con Java esistente~\cite{kotlin_spec_2020}. La maturità dell'ecosistema e il supporto di JetBrains — nonché l'adozione ufficiale da parte di Google come linguaggio primario per lo sviluppo Android — ne hanno consolidato la credibilità come linguaggio di produzione.
+
+\ac{kmp} è un'estensione del compilatore Kotlin che permette di compilare lo stesso codice sorgente verso target eterogenei: JVM, JavaScript per il browser, e codice nativo tramite backend LLVM~\cite{kotlinlang_multiplatform}. Il punto centrale è che KMP non è un framework di astrazione che interpone un layer uniformizzante tra il codice e la piattaforma: genera artefatti nativi distinti per ciascun target, mantenendo le caratteristiche di performance e interoperabilità proprie di ciascuno. Questa distinzione è rilevante rispetto ad approcci come React Native o Flutter, dove il codice condiviso viene eseguito in un runtime separato.
+
+Il meccanismo che rende possibile la condivisione selettiva del codice è la dichiarazione \texttt{expect}/\texttt{actual}~\cite{kotlinlang_expect_actual}. Nel modulo condiviso (\texttt{commonMain}) è possibile dichiarare una funzione o una classe come \texttt{expect}, specificandone la firma senza fornirne l'implementazione. Ciascun modulo specifico di piattaforma fornisce poi la corrispondente dichiarazione \texttt{actual}, con un'implementazione che può sfruttare le API native del target. Questo meccanismo consente di separare nettamente la logica di business — che risiede nel modulo comune ed è condivisa tra tutti i target — dalle implementazioni dipendenti dalla piattaforma, senza rinunciare al type checking a tempo di compilazione.
+
+Dal punto di vista del gap identificato in precedenza, la caratteristica rilevante di KMP è la presenza del target \textbf{Kotlin/Native}: il compilatore produce binari nativi tramite LLVM, senza dipendenza da una JVM a runtime. Questo apre la possibilità di eseguire codice Kotlin su piattaforme embedded, su macOS e iOS, e in generale in qualsiasi contesto dove un runtime JVM non è disponibile o desiderabile. Soprattutto, Kotlin/Native offre un meccanismo diretto per interfacciarsi con librerie C — aspetto che viene trattato nella sottosezione successiva.
+
 \subsection{Interoperabilità con C tramite Cinterop}
 \label{subsec:background-kmp-cinterop}
+
+Kotlin/Native include uno strumento dedicato all'interoperabilità con librerie C denominato \texttt{cinterop}~\cite{kotlinlang_cinterop}. Il suo funzionamento si basa sulla lettura degli header \texttt{.h} di una libreria C: a partire da questi, \texttt{cinterop} genera automaticamente un modulo Kotlin contenente le definizioni corrispondenti — funzioni, struct, enumerazioni e costanti — con tipi Kotlin appropriati. Lo sviluppatore configura il processo tramite un file \texttt{.def}, in cui specifica quali header includere, eventuali flag di compilazione, e parametri di mappatura dei tipi. Il tutto avviene a tempo di compilazione, producendo un modulo che può essere importato nel codice Kotlin come qualsiasi altra dipendenza.
+
+Il confronto con Node-API, descritta nella sezione precedente, è diretto. Con Node-API l'integrazione di una libreria C in un progetto JavaScript richiedeva la scrittura manuale di codice C++ come strato di collegamento: il binding tra i tipi JavaScript e quelli C doveva essere gestito esplicitamente dallo sviluppatore, con tutti i costi di manutenzione e le insidie di type safety che ne derivano. Con \texttt{cinterop}, questo strato viene generato automaticamente dal compilatore a partire dagli header: lo sviluppatore scrive esclusivamente in Kotlin, senza mai uscire dal proprio linguaggio di riferimento. Il principio del monolinguaggio — compromesso nell'approccio Node-API — viene quindi preservato.
+
+Vale la pena segnalare un limite architetturale rilevante: \texttt{cinterop} è disponibile esclusivamente nel target Kotlin/Native. Il codice che utilizza binding generati da \texttt{cinterop} non può quindi risiedere nel modulo \texttt{commonMain} di un progetto KMP, ma deve essere collocato nel modulo nativo specifico. In pratica, questo significa che le chiamate dirette alle librerie C costituiscono un'implementazione \texttt{actual} nel modulo nativo, mentre l'interfaccia esposta al codice comune viene dichiarata tramite la corrispondente dichiarazione \texttt{expect}. Non si tratta di una limitazione bloccante, ma di un vincolo di design che influenza la struttura del progetto e che verrà ripreso nella descrizione architetturale nei capitoli successivi.
 
 \section{Lo standard FMI e il formato FMU}
 \label{sec:background-fmi}
