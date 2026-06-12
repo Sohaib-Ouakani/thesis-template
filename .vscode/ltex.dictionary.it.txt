@@ -15,3 +15,4 @@ Vaadin
 Vercel
 multitarget
 istanziamento
+metadati
