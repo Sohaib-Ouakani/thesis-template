@@ -17,7 +17,7 @@ Il modulo \texttt{frontend} realizza l'interfaccia utente web. Il frontend comun
 % TODO: inserire diagramma architettura
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.85\textwidth]{figures/diagramma-tirocinio.png}
+  \includegraphics[width=\textwidth]{figures/diagramma-tirocinio.png}
   \caption{Diagramma rappresentante relazione tra i moduli dell'applicativo.}
   \label{fig:architettura}
 \end{figure}
@@ -39,17 +39,21 @@ Per ciascun componente vengono discusse le scelte progettuali significative, con
 Il modulo \texttt{fmu-kt} è il componente del sistema responsabile di tutta l'interazione con la libreria nativa FMILib. Il suo design è orientato ad astrarre la complessità di basso livello esposta dalla libreria C, presentando agli strati superiori un'interfaccia di alto livello che non richiede alcuna conoscenza dei dettagli nativi.
 
 Il punto di accesso esterno al modulo è \texttt{FmuService}, un'interfaccia che espone le operazioni disponibili sugli FMU: caricamento, lettura dei metadati e avvio della simulazione. Questa scelta consente al backend di dipendere esclusivamente dal contratto dell'interfaccia, rendendo il modulo sostituibile e facilmente testabile tramite implementazioni fittizie.
-Ulteriori funzionalità potranno essere introdotte in futuro aggiungendo nuovi
-metodi all'interfaccia e le relative implementazioni, senza alterare la
-struttura generale del modulo.
+Ulteriori funzionalità potranno essere introdotte in futuro aggiungendo nuovi metodi all'interfaccia e le relative implementazioni, senza alterare la struttura generale del modulo.
 
-L'implementazione concreta del servizio delega la gestione del modello a\\\texttt{FmuManager}, un componente che orchestra l'intero ciclo di vita di un FMU attraverso tre manager specializzati, ciascuno con una responsabilità ben delimitata:
+L'implementazione concreta del servizio, denominata \texttt{DefaultFmuService} delega la gestione del modello a \texttt{FmuManager}, un componente che orchestra l'intero ciclo di vita di un FMU attraverso tre manager specializzati, ciascuno con una responsabilità ben delimitata:
 
 \begin{itemize}
   \item \textbf{FmuLifecycleManager}: si occupa dell'apertura e della chiusura dell'FMU, gestendo l'allocazione e il rilascio delle risorse associate.
   \item \textbf{InfoManagerFmu}: estrae i metadati del modello — nome, autore, versione, variabili disponibili e parametri dell'esperimento predefinito — interrogando direttamente le strutture dati native.
   \item \textbf{SimulationManager}: gestisce la configurazione e l'esecuzione della simulazione raccogliendo i risultati e restituendoli in un formato indipendente dalla libreria nativa.
 \end{itemize}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figures/fmukt-design.png}
+    \caption{Design del modulo fmu-kt}
+\end{figure}
 
 Questi tre manager sono gli unici componenti del sistema che interagiscono direttamente con FMILib. Concentrare questo confine in un insieme ristretto e ben identificato di classi rende il sistema più manutenibile: eventuali cambiamenti nell'API nativa o l'adozione di una libreria FMI alternativa richiederebbero modifiche localizzate nei manager, senza propagarsi al resto dell'architettura.
 
@@ -58,5 +62,28 @@ Prima che un FMU possa essere caricato, è necessaria una fase di preparazione d
 \subsection{Backend multipiattaforma}
 \label{subsec:design-backend}
 
+Il backend è strutturato in modo da separare nettamente la definizione delle rotte HTTP dalla logica applicativa che ne gestisce le richieste. Il componente centrale di questa separazione è \texttt{RequestHandler}, che raccoglie tutta la logica di gestione delle richieste e viene iniettato nel layer di routing al momento dell'avvio del server. In questo modo le rotte rimangono dichiarative e di facile lettura, limitandosi a descrivere la mappatura tra endpoint e operazioni, mentre tutta la logica risiede in un unico posto ben identificato. Aggiungere o modificare un endpoint richiede quindi interventi localizzati e indipendenti tra loro.
+
+\texttt{RequestHandler} è a sua volta una composizione di due componenti, ciascuno con una responsabilità distinta:
+
+\begin{itemize}
+  \item \textbf{ResourceManagerService}: è l'interfaccia che definisce le operazioni di gestione del filesystem locale, in particolare del salvataggio del file FMU ricevuto dal client e della restituzione dei percorsi necessari al caricamento del modello. Isolare questa responsabilità in un componente dedicato rende esplicito il confine tra la gestione delle risorse persistenti e la logica di interazione con il modello, e semplifica la sostituzione della strategia di memorizzazione, ad esempio in fase di test.
+  \item \textbf{FmuService}: è l'interfaccia del modulo \texttt{fmu-kt} descritta nella sezione precedente. Il backend non dipende da nessun dettaglio interno di quel modulo: conosce solo le operazioni che il servizio espone, mantenendo il disaccoppiamento tra i due moduli.
+\end{itemize}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\textwidth]{figures/backend-design.png}
+    \caption{Design del modulo backend}
+\end{figure}
+
+Questa composizione rispecchia il flusso naturale di una richiesta: quando il client avvia una simulazione, \texttt{RequestHandler} gestisce il caricamento del file, che viene salvato dal \texttt{ResourceManagerService} e successivamente fornito a\\\texttt{FmuService} per il caricamento e l'esecuzione del modello. Le due responsabilità — dove si trova il file e cosa farne — restano separate e intercambiabili indipendentemente. La scelta far dipendere \texttt{RequestHandler} da un'interfaccia piuttosto che a una classe, per quanto riguarda la gestione del filesystem, è motivata dalla volontà di astrarre l'organizzazione interna dei file, permettendo così di realizzare un sistema di salvataggio organizzato in modo diversa senza intaccare in alcun modo il \texttt{RequestHandler}.
+
 \subsection{Frontend multipiattaforma}
 \label{subsec:design-frontend}
+
+Il frontend è organizzato attorno a due responsabilità principali, riflesse nella struttura del modulo: la presentazione dell'interfaccia utente e la comunicazione con il backend.
+
+La navigazione tra le diverse viste dell'applicazione è gestita attraverso il concetto di \emph{screen}, ognuno dei quali rappresenta una schermata autonoma con una funzione ben precisa. Sono presenti una schermata iniziale (\texttt{HomeScreen}), una per la visualizzazione dei metadati del modello caricato (\texttt{InfoScreen}), una per la configurazione e l'avvio della simulazione (\texttt{SimulationScreen}) e una per la visualizzazione grafica dei risultati (\texttt{ChartScreen}). Questa suddivisione rende il codice dell'interfaccia facilmente navigabile e consente di aggiungere nuove schermate senza interferire con quelle esistenti.
+
+La comunicazione con il backend è invece centralizzata nel modulo \texttt{client}, che espone le funzioni necessarie per interagire con ciascun endpoint REST. Concentrare questa logica in un unico punto evita la duplicazione del codice di comunicazione tra le schermate e isola i dettagli del protocollo HTTP dal codice dell'interfaccia utente. Le schermate si limitano quindi a invocare le funzioni del client e a reagire ai risultati, senza conoscere nulla della comunicazione sottostante.
