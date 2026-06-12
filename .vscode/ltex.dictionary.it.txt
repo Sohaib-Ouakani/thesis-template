@@ -16,3 +16,4 @@ Vercel
 multitarget
 istanziamento
 metadati
+manutenibile
