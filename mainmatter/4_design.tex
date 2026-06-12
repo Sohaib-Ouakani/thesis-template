@@ -1,9 +1,30 @@
-
 \chapter{Design}
 \label{chap:design}
 
 \section{Architettura}
 \label{sec:design-architettura}
+
+Il sistema è strutturato secondo un'architettura client-server a tre livelli, in cui ogni livello è realizzato come modulo indipendente all'interno di un unico progetto multi-modulo. I quattro moduli che compongono il progetto sono \texttt{fmilib}, \texttt{fmu-kt}, \texttt{backend} e \texttt{frontend}, ciascuno con responsabilità ben delimitate e dipendenze unidirezionali.
+
+Il modulo \texttt{fmilib} costituisce la base della catena di dipendenze: si occupa della compilazione della libreria nativa \emph{FMILib} e ne espone gli artefatti (header C e librerie condivise) agli strati superiori. Questa scelta isola completamente la toolchain di compilazione dal resto del progetto Kotlin, rendendo il confine tra codice nativo e codice multipiattaforma esplicito e controllato.
+
+Il modulo \texttt{fmu-kt} costituisce il cuore della logica di dominio. Dipende da \texttt{fmilib} e si occupa di tutto ciò che riguarda il ciclo di vita degli FMU: caricamento del file, parsing dell'XML descrittivo, invocazione della libreria nativa per l'esecuzione della simulazione, e restituzione dei risultati. Il modulo è compilato come libreria Kotlin Multiplatform per le piattaforme native (Linux x64, macOS ARM64 e Windows x64), consentendo di riutilizzare la logica comune tra le piattaforme e di isolare, nei source set specifici, le parti che richiedono comportamenti differenziati — in particolare la fase di preelaborazione degli FMU su macOS ARM, che richiede la ricompilazione del modello.
+
+Il modulo \texttt{backend} implementa un server HTTP REST che espone le funzionalità di \texttt{fmu-kt} come API consumabile dal frontend, è anch'esso un modulo Kotlin Multiplatform con target nativi. Il server espone endpoint per il caricamento del file FMU, l'inizializzazione, la lettura dei metadati e l'esecuzione della simulazione.
+
+Il modulo \texttt{frontend} realizza l'interfaccia utente web. Il frontend comunica con il backend, permettendo così all'utente di interagire con gli endpoint esposti e di avere una visualizzazione grafica delle informazioni e dei risultati della simulazione.
+
+% TODO: inserire diagramma architettura
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\textwidth]{figures/diagramma-tirocinio.png}
+  \caption{Diagramma rappresentante relazione tra i moduli dell'applicativo.}
+  \label{fig:architettura}
+\end{figure}
+
+Questa scelta disaccoppia completamente i tre processi: il backend può essere avviato indipendentemente, testato in isolamento tramite client HTTP standard, e in futuro potrebbe essere esposto su rete senza modifiche architetturali. Il frontend non conosce nulla della logica FMU; conosce solo i contratti delle API REST. Mentre il modulo \texttt{fmu-kt} funge da libreria indipendente, dunque può essere esportata per essere usata in altri progetti.
+
+Una conseguenza rilevante di questa architettura è la separazione netta tra la parte del sistema che richiede accesso nativo — \texttt{fmu-kt} e \texttt{backend}, che devono interagire con la libreria C e con il filesystem — e la parte puramente applicativa del frontend, che rimane nel dominio Kotlin puro. Questo ha guidato la decisione di non integrare \texttt{fmu-kt} direttamente nel frontend, evitando di contaminare il modulo UI con dipendenze native.
 
 \section{Design di dettaglio}
 \label{sec:design-dettaglio}
