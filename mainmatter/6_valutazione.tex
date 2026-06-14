@@ -1,8 +1,36 @@
 \chapter{Valutazione}
 \label{chap:valutazione}
 
+La valutazione del sistema è stata condotta su due livelli complementari. Il primo riguarda la correttezza funzionale dei componenti: tramite test unitari e di integrazione si verifica che la logica di dominio, il backend e la loro interazione producano i risultati attesi in isolamento, indipendentemente dalla piattaforma su cui vengono eseguiti. Il secondo livello riguarda invece la correttezza multipiattaforma: la pipeline di CI esegue l'intera suite di test e una verifica end-to-end del backend su Linux x64, macOS ARM64 e Windows x64, garantendo che il comportamento del sistema sia consistente su tutte le piattaforme target.
+
+Le sezioni seguenti descrivono nel dettaglio le strategie adottate per ciascuno dei due livelli, le scelte che hanno guidato la struttura dei test e i risultati ottenuti.
+
 \section{Test unitari e di integrazione}
 \label{sec:val-test}
 
+\paragraph{Strategia di testing e uso dei mock}
+
+La strategia di testing adottata mira a verificare i componenti del sistema in isolamento, evitando dipendenze tra moduli che renderebbero i test fragili e difficili da diagnosticare. A tale scopo, il backend non istanzia mai direttamente \texttt{DefaultFmuService}, ma dipende dall'interfaccia \texttt{FmuService}, che viene sostituita nei test da \texttt{FakeFmuService} — un'implementa\-zione fittizia con comportamento prevedibile e controllabile. Analogamente, \\\texttt{ResourceManager} viene sostituito da \texttt{FakeResourceManager}, che simula le operazioni sul filesystem senza accedervi realmente. Questa architettura permette di testare l'intera logica del \texttt{RequestHandler} — dalla gestione degli errori alla serializzazione delle risposte — senza che i test dipendano dalla presenza di un FMU reale o di un filesystem configurato, rendendo la suite eseguibile in qualsiasi ambiente CI senza setup aggiuntivo.
+
+\paragraph{Test del modulo fmu-kt}
+
+I test del modulo \texttt{fmu-kt} sono organizzati in due livelli. Il primo comprende test unitari sui componenti specifici di macOS ARM64 — \texttt{DescriptionParser}, \texttt{FilesystemManager}, \texttt{FmiHeaderSynthesiser} e \\\texttt{FmuRecompiler} — che verificano il comportamento dei singoli componenti della pipeline di ricompilazione in isolamento. Il secondo livello è costituito da una suite di test di integrazione che mette alla prova \texttt{FmuManager} su FMU reali, verificando il corretto funzionamento dell'intera catena: caricamento, estrazione dei metadati e simulazione.
+
+\paragraph{Suite dinamica su FMU reali con Kotest}
+
+La suite di integrazione è implementata tramite Kotest ed è progettata per essere estensibile in previsione di sviluppi futuri. I test vengono generati dinamicamente a partire da un sottomodulo Git che raccoglie una collezione di FMU di riferimento~\cite{Dassault25}: per ciascun FMU presente nel sottomodulo viene prodotta una serie di test case — relativi al ciclo di vita, all'estrazione dei metadati e alla simulazione — che compaiono come voci distinte nel report.
+
+L'esecuzione di ciascun test è condizionata da una funzione di guardia, \\\texttt{fmuGuard}, che filtra i modelli in base alla versione FMI supportata: nella configurazione attuale vengono abilitati solo gli FMU di versione 2.0, che è l'unica versione supportata dall'applicativo. La guardia è espressa come condizione booleana facilmente modificabile: nel momento in cui si volesse estendere il supporto a FMI 1.0 o 3.0, sarebbe sufficiente aggiornare la condizione di filtraggio per includere la nuova versione, e i test corrispondenti si attiverebbero automaticamente prima ancora di iniziare l'implementazione, abilitando un approccio test-driven allo sviluppo delle nuove funzionalità.
+
+Su macOS ARM64 è presente un ulteriore livello di filtraggio: la guardia esclude gli FMU privi di sorgenti C, poiché la pipeline di ricompilazione descritta nella Sezione~\ref{sec:impl-macos} richiede la disponibilità dei sorgenti per produrre il fat binary compatibile con Apple Silicon. Gli FMU precompilati senza sorgenti vengono quindi marcati come disabilitati con una motivazione esplicita nel report, mantenendo visibilità sul fatto che l'esclusione è intenzionale e non un errore.
+
+Ogni test case gestisce autonomamente la creazione e la pulizia di una directory temporanea dedicata tramite un blocco \texttt{try}/\texttt{finally}, garantendo che lo stato del filesystem sia ripristinato dopo ogni esecuzione indipendentemente dall'esito del test.
+
 \section{Copertura multipiattaforma nella CI}
 \label{sec:val-ci}
+
+L'esecuzione della suite di test è integrata direttamente nella pipeline di CI descritta nella Sezione~\ref{sec:impl-processo}: il task \texttt{build} di Gradle, invocato su ciascuno dei tre runner — \texttt{ubuntu-latest}, \texttt{macos-latest} e \texttt{windows-latest} — include l'esecuzione completa dei test come parte del ciclo di build ordinario. In questo modo ogni push sui branch principali produce una verifica automatica della correttezza del sistema su tutte le piattaforme target, senza richiedere passi separati.
+
+Su Windows è necessaria una configurazione aggiuntiva: la directory contenente la \texttt{.dll} di FMILib viene aggiunta dinamicamente alla variabile d'ambiente \texttt{PATH} prima dell'esecuzione del task di test, poiché il loader di Windows richiede che le librerie condivise siano raggiungibili tramite quella variabile.
+
+Al termine della build, il workflow verifica la correttezza end-to-end del backend avviando l'eseguibile prodotto ed effettuando una chiamata all'endpoint \texttt{/health}, confermando che il server sia in grado di rispondere correttamente dopo l'intero ciclo di compilazione e linking sulla piattaforma corrente.
