@@ -77,6 +77,12 @@ L'intero progetto è organizzato come un progetto Gradle multi-modulo, in cui og
 
 La compilazione di FMILib è gestita tramite il plugin Gradle per interagire con CMake chiamato \texttt{gradle-cmake}~\cite{tomtzook_gradle_cmake_2022}, che integra il ciclo di build CMake direttamente nel task graph di Gradle. Il modulo \texttt{fmilib} registra una target CMake che punta al \texttt{CMakeLists.txt} della libreria e aggiunge un task \texttt{cmakeInstall} che, dopo la compilazione, esegue \texttt{cmake --install} per ciascuna piattaforma rilevata nella directory di build, producendo gli artefatti installati in una struttura \\\texttt{fmilib-install/<piattaforma>} con le sottocartelle \texttt{include}, \texttt{lib} e \texttt{bin}. Questa struttura è quella referenziata dai moduli \texttt{fmu-kt} e \texttt{backend} per configurare le opzioni di cinterop e di linking.
 
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figures/diagramma-compilazione.png}
+    \caption{Diagramma rappresentante il processo di compilazione della libreria FMILib.}
+\end{figure}
+
 Il modulo \texttt{fmu-kt} dichiara una configurazione Gradle personalizzata \\(\texttt{cLibrary}) per esprimere la dipendenza sugli artefatti compilati di \texttt{fmilib}, e configura il cinterop di Kotlin/Native puntando all'header \texttt{fmilib.h} e alla directory degli include della piattaforma corrente. Poiché la piattaforma host è rilevata a runtime tramite \texttt{OperatingSystem.current()}, viene registrato un solo target nativo per build — quello corrispondente al sistema su cui si esegue Gradle — evitando la necessità di cross-compilazione. La stessa logica si applica al modulo \texttt{backend}.
 
 Su Windows è presente una configurazione aggiuntiva: al termine del linking dell'eseguibile, un task di tipo \texttt{Copy} provvede a copiare la \texttt{.dll} di FMILib nella stessa directory dell'eseguibile prodotto, poiché su quella piattaforma il loader del sistema operativo richiede che le librerie condivise siano nella medesima directory del binario o nel \texttt{PATH}.

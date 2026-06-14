@@ -42,7 +42,7 @@ Emerge dunque un limite: l'integrazione con librerie native risulta problematica
 %Altre opzioni per lo sviluppo \textit{full stack} le troviamo ad esempio anche con Python, che al contrario di Node.js presenta varie soluzioni per interagire con il nativo, approccio però che aumenta la frammentazione e spesso coinvolge la scrittura di codice in altri linguaggi per la compilazione nativa, oppure scrittura di codice per tradurre le API a Python.
 
 
-\subsection{La portabilità e integrazione con librerie native}
+\subsection{Portabilità e integrazione con librerie native}
 \label{subsec:background-fullstack-gap}
 Per librerie native si in intendono tutte le librerie compilate in linguaggio macchina specifico per un architettura. Queste espongono delle \textbf{ABI} (application binary interface) ovvero delle interfacce applicative che comunicano direttamente con il sistema operativo a livello di linguaggio macchina.
 Tra i linguaggi che vengono compilati in codice macchina figurano, C, C++, Rust e Zig; questi spesso vengono utilizzati per la realizzazione di programmi che hanno necessità di accedere direttamente all'hardware sottostante, oppure per sviluppare librerie che implementano alcuni standard. Quest'ultimo caso è il più rilevante per la tesi, infatti l'applicativo realizzato per questa tesi interagisce con dei file aderenti allo standard \ac{fmi}, il quale verrà approfondito in seguito nella sezione dedicata.
