@@ -4,8 +4,18 @@
 \section{Limitazioni}
 \label{sec:conclusioni-limitazioni}
 
+Il sistema sviluppato presenta alcune limitazioni che restano aperte al termine del lavoro. La più significativa riguarda il supporto allo standard FMI: l'applicativo supporta esclusivamente la versione 2.0 in modalità Co-Simulation, escludendo sia la versione 1.0 che la più recente 3.0. Estendere il supporto richiederebbe uno studio approfondito delle API di FMILib per ciascuna versione, che differiscono non solo nei nomi dei simboli nativi — \texttt{fmi2\_*} per la versione 2.0, \texttt{fmi3\_*} per la 3.0 — ma potenzialmente anche nella struttura del lifecycle e nelle modalità di simulazione.
+
+Una seconda limitazione riguarda la pipeline di ricompilazione degli FMU su macOS ARM64. La soluzione attuale si affida a header FMI 2.0 sintetizzati al momento della compilazione, in assenza di un meccanismo che garantisca l'utilizzo degli header ufficiali distribuiti dallo standard. Sebbene la sintesi produca header funzionalmente equivalenti per i casi trattati, un approccio più robusto prevederebbe l'inclusione degli header ufficiali all'interno del progetto, eliminando la dipendenza dalla fase di sintesi e rendendo la toolchain di ricompilazione più affidabile su FMU con sorgenti che fanno uso di funzionalità meno comuni dell'API FMI.
+
+Infine, il sistema non dispone attualmente di funzionalità per l'esportazione dei risultati di simulazione. I dati prodotti sono visualizzabili tramite l'interfaccia grafica, ma non è possibile salvarli in un formato standard come CSV o JSON per un'analisi successiva con strumenti esterni.
+
 \section{Sviluppi futuri}
 \label{sec:conclusioni-futuro}
+
+Gli sviluppi futuri più naturali del progetto seguono direttamente le limitazioni descritte. L'estensione del supporto a FMI 3.0 — e potenzialmente a FMI 1.0 — rappresenta la direzione più rilevante. L'architettura attuale offre una base favorevole per questo sviluppo: \texttt{FmuService} espone un'interfaccia agnostica alla versione FMI (\texttt{load}, \texttt{getInfo}, \texttt{simulate}), e sarebbe possibile introdurre una factory che, ricevuta la versione FMI rilevata in fase di caricamento, produca l'implementazione concreta di \texttt{FmuManager} appropriata. Ogni implementazione gestirebbe il proprio lifecycle e le proprie chiamate native dietro un'interfaccia comune che astrae le operazioni fondamentali, confinando le differenze semantiche tra le versioni nelle implementazioni specifiche. L'infrastruttura di test dinamica già predisposta consentirebbe inoltre di adottare un approccio test-driven: aggiornando la condizione di filtraggio della suite, i test sugli FMU della nuova versione si attiverebbero prima ancora di iniziare l'implementazione, mantenendo il ciclo di sviluppo guidato dai casi di test.
+
+L'aggiunta di una funzione di esportazione dei risultati — in formato CSV o JSON — rappresenta invece uno sviluppo a basso costo e ad alto impatto pratico, che renderebbe il sistema più utile in contesti di ricerca e analisi dove i dati di simulazione devono essere elaborati con strumenti esterni.
 
 \section{Conclusioni}
 \label{sec:conclusioni-conclusioni}
