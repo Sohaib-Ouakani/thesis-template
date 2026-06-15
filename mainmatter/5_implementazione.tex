@@ -66,6 +66,15 @@ Per realizzare questa pipeline di ricompilazione è stato necessario costruire u
 
 La compilazione di ciascun file sorgente avviene in due passaggi distinti, uno per architettura. I flag di compilazione includono \texttt{-dynamiclib} per produrre una libreria condivisa e l'indicazione dell'architettura target tramite \texttt{-arch x86\_64} e \texttt{-arch arm64} rispettivamente. Un aspetto non banale della compilazione riguarda gli header: i sorgenti C degli FMU includono tipicamente gli header FMI 2.0 (\texttt{fmi2Functions.h}, \texttt{fmi2FunctionTypes.h},\\\texttt{fmi2TypesPlatform.h}), che non sono presenti nel sistema ma sono forniti dallo standard e devono essere resi disponibili al compilatore. La soluzione adottata è sintetizzare gli header che raccolgono le dichiarazioni necessarie e passarne il percorso a Clang tramite il flag \texttt{-I}. Non esiste un approccio canonico consolidato per questo problema nel contesto della ricompilazione runtime di FMU: la sintesi dell'header, gestita dalla classe \texttt{FmiHeaderSynthesiser}, è una soluzione pragmatica che elimina la dipendenza da un'installazione esterna degli header FMI sul sistema.
 
+Le componenti descritte vengono orchestrate da una classe denominata \\\texttt{FmuRecompiler} raffigurata in~\ref{fig:design fmurecompiler}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figures/FmuRecompiler.png}
+    \caption{Struttura di \texttt{FmuRecompiler}}
+    \label{fig:design fmurecompiler}
+\end{figure}
+
 Un ulteriore problema emerge durante il linking ed è intrinseco alla modalità di distribuzione degli FMU con sorgenti C. Lo standard FMI 2.0 prevede che, quando un FMU è distribuito con codice sorgente, i nomi delle funzioni vengano costruiti anteponendo il prefisso \texttt{FMI2\_FUNCTION\_PREFIX}, definito come il \texttt{modelIdentifier} dell'FMU seguito da \texttt{\_}, al nome standard della funzione: una funzione come \texttt{fmi2DoStep} diventa quindi \texttt{ModelName\_fmi2DoStep}. Questa convenzione serve a evitare conflitti tra simboli di FMU diversi quando più modelli vengono compilati e linkati staticamente nello stesso processo. FMILib, tuttavia, si aspetta di trovare nella \texttt{.dylib} i simboli con i nomi standard non prefissati, poiché per le shared library lo standard prescrive l'assenza del prefisso. Per risolvere questa discrepanza vengono creati degli alias a livello di linker tramite il flag \texttt{-alias}, che istruisce il linker a esporre ciascun simbolo prefissato anche con il nome standard atteso da FMILib, senza duplicare il codice.
 
 \section{Strumenti di processo: Gradle, CI/CD e pi\-peline multipiattaforma}
@@ -76,11 +85,13 @@ Un ulteriore problema emerge durante il linking ed è intrinseco alla modalità 
 L'intero progetto è organizzato come un progetto Gradle multi-modulo, in cui ogni modulo — \texttt{fmilib}, \texttt{fmu-kt}, \texttt{backend} e \texttt{frontend} — dispone di un proprio \texttt{build.gradle.kts} con le dipendenze e i target specifici. Il build file radice si limita a dichiarare i plugin condivisi e i repository comuni, delegando tutta la logica ai moduli figli.
 
 La compilazione di FMILib è gestita tramite il plugin Gradle per interagire con CMake chiamato \texttt{gradle-cmake}\footnote{\href{https://github.com/tomtzook/gradle-cmake}{GitHub contente il codice del plugin \texttt{gradle-cmake}.}}, che integra il ciclo di build CMake direttamente nel task graph di Gradle. Il modulo \texttt{fmilib} registra una target CMake che punta al \texttt{CMakeLists.txt} della libreria e aggiunge un task \texttt{cmakeInstall} che, dopo la compilazione, esegue \texttt{cmake --install} per ciascuna piattaforma rilevata nella directory di build, producendo gli artefatti installati in una struttura \\\texttt{fmilib-install/<piattaforma>} con le sottocartelle \texttt{include}, \texttt{lib} e \texttt{bin}. Questa struttura è quella referenziata dai moduli \texttt{fmu-kt} e \texttt{backend} per configurare le opzioni di cinterop e di linking.
+La figura \ref{fig:compilazione fmilib} offre una visione generale del meccanismo di compilazione della libreria FMILib.
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{figures/diagramma-compilazione.png}
     \caption{Diagramma rappresentante il processo di compilazione della libreria FMILib.}
+    \label{fig:compilazione fmilib}
 \end{figure}
 
 Il modulo \texttt{fmu-kt} dichiara una configurazione Gradle personalizzata \\(\texttt{cLibrary}) per esprimere la dipendenza sugli artefatti compilati di \texttt{fmilib}, e configura il cinterop di Kotlin/Native puntando all'header \texttt{fmilib.h} e alla directory degli include della piattaforma corrente. Poiché la piattaforma host è rilevata a runtime tramite \texttt{OperatingSystem.current()}, viene registrato un solo target nativo per build — quello corrispondente al sistema su cui si esegue Gradle — evitando la necessità di cross-compilazione. La stessa logica si applica al modulo \texttt{backend}.
