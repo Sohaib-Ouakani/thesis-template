@@ -24,7 +24,7 @@ Questa catena di interazioni è rappresentata nella figura \ref{fig:architettura
 
 Questa scelta disaccoppia completamente i tre processi: il backend può essere avviato indipendentemente, testato in isolamento tramite client HTTP standard, e in futuro potrebbe essere esposto su rete senza modifiche architetturali. Il frontend non conosce nulla della logica FMU; conosce solo i contratti delle API REST. Mentre il modulo \texttt{fmu-kt} funge da libreria indipendente, dunque può essere esportata per essere usata in altri progetti.
 
-Una conseguenza rilevante di questa architettura è la separazione netta tra la parte del sistema che richiede accesso nativo — \texttt{fmu-kt} e \texttt{backend}, che devono interagire con la libreria C e con il filesystem — e la parte puramente applicativa del frontend, che rimane nel dominio Kotlin puro. Questo ha guidato la decisione di non integrare \texttt{fmu-kt} direttamente nel frontend, evitando di contaminare il modulo UI con dipendenze native.
+Una conseguenza rilevante di questa architettura è la separazione netta tra la parte del sistema che richiede accesso nativo — \texttt{fmu-kt} e \texttt{backend}, che devono interagire con la libreria C e con il filesystem — e la parte puramente applicativa del frontend, che rimane nel dominio Kotlin puro. Questo ha guidato la decisione di non integrare \texttt{fmu-kt} direttamente nel frontend, evitando di contaminare il modulo che implementa la \ac{ui} con dipendenze native.
 
 \section{Design di dettaglio}
 \label{sec:design-dettaglio}
