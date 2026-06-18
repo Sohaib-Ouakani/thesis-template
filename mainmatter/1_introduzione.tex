@@ -11,7 +11,7 @@ L'esigenza di unificare le tecnologie impiegate, adottando un unico linguaggio p
 \section{Obiettivi del progetto}
 \label{sec:intro-obiettivi}
 
-L'obiettivo del progetto è la progettazione e lo sviluppo di un applicativo full stack in Kotlin per la gestione e la simulazione di file \ac{fmu}, il formato archivistico definito dallo standard \ac{fmi} per lo scambio di modelli di simulazione tra strumenti eterogenei. L'applicativo consente di caricare un file \ac{fmu}, estrarne i metadati, configurare ed eseguire una simulazione, e visualizzare i risultati tramite un'interfaccia grafica.
+L'obiettivo del progetto è la progettazione e lo sviluppo di un applicativo full stack in Kotlin per la gestione e la simulazione di file \ac{fmu}, il formato archivistico definito dallo standard \ac{fmi} per lo scambio di modelli di simulazione. L'applicativo consentirà di caricare un file \ac{fmu}, estrarne i metadati, configurare ed eseguire una simulazione, e visualizzare i risultati tramite un'interfaccia grafica.
 
 Il vincolo principale che ha guidato le scelte progettuali è l'utilizzo esclusivo di Kotlin come linguaggio di sviluppo per l'intero stack, dal collegamento con la libreria nativa — scritta in C — fino all'interfaccia utente. Il sistema supporta tre piattaforme target: Linux x64, Windows x64 e macOS ARM64. Quest'ultima piattaforma ha richiesto una soluzione ad hoc per la ricompilazione degli FMU distribuiti senza binari compatibili con Apple Silicon, rappresentando uno degli aspetti tecnici più rilevanti del lavoro.
 
