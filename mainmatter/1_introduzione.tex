@@ -1,21 +1,18 @@
 \chapter{Introduzione}
 \label{chap:introduction}
 
-\section{Contesto e motivazione}
+\section{Contesto e Obiettivi del progetto}
 \label{sec:intro-contesto}
 
 In molti contesti industriali, lo stack software degli applicativi interni è eterogeneo per necessità: le librerie che implementano standard tecnici di settore sono scritte in linguaggi di programmazione nativi, mentre i componenti di alto livello — interfacce utente, logica applicativa, servizi di comunicazione — sono sviluppati in linguaggi diversi. Questa stratificazione porta a duplicazione di codice, aumento della complessità strutturale e costi di manutenzione crescenti.
 
 L'esigenza di unificare le tecnologie impiegate, adottando un unico linguaggio per l'intero stack senza rinunciare all'integrazione con le librerie native esistenti, è il problema da cui prende origine questo lavoro. Una possibile risposta a questa esigenza è rappresentata da Kotlin Multiplatform, che permette di condividere logica applicativa tra piattaforme diverse producendo binari nativi tramite il compilatore Kotlin/Native, e che offre un meccanismo diretto per interfacciarsi con librerie C tramite lo strumento \texttt{cinterop} — aspetti approfonditi nel Capitolo~\ref{chap:background}.
 
-\section{Obiettivi del progetto}
-\label{sec:intro-obiettivi}
-
 L'obiettivo del progetto è la progettazione e lo sviluppo di un applicativo full stack in Kotlin per la gestione e la simulazione di file \ac{fmu}, il formato archivistico definito dallo standard \ac{fmi} per lo scambio di modelli di simulazione. L'applicativo consentirà di caricare un file \ac{fmu}, estrarne i metadati, configurare ed eseguire una simulazione, e visualizzare i risultati tramite un'interfaccia grafica.
 
 Il vincolo principale che ha guidato le scelte progettuali è l'utilizzo esclusivo di Kotlin come linguaggio di sviluppo per l'intero stack, dal collegamento con la libreria nativa — scritta in C — fino all'interfaccia utente. Il sistema supporta tre piattaforme target: Linux x64, Windows x64 e macOS ARM64. Quest'ultima piattaforma ha richiesto una soluzione ad hoc per la ricompilazione degli FMU distribuiti senza binari compatibili con Apple Silicon, rappresentando uno degli aspetti tecnici più rilevanti del lavoro.
 
-\section{Struttura della tesi}
-\label{sec:intro-struttura}
+% \section{Struttura della tesi}
+% \label{sec:intro-struttura}
 
-Il Capitolo~\ref{chap:background} introduce il contesto tecnologico — lo sviluppo full stack monolinguaggio, Kotlin Multiplatform e lo standard \ac{fmi} — fornendo le basi necessarie alla comprensione delle scelte progettuali. Il Capitolo~\ref{chap:analisi} descrive il modello di dominio e i vincoli di progetto. Il Capitolo~\ref{chap:design} presenta le scelte architetturali e di design. Il Capitolo~\ref{chap:implementazione} approfondisce gli aspetti implementativi più rilevanti. Il Capitolo~\ref{chap:valutazione} descrive la strategia di testing e la copertura multipiattaforma. Il Capitolo~\ref{chap:conclusioni} chiude il lavoro con una discussione delle limitazioni e degli sviluppi futuri.
+% Il Capitolo~\ref{chap:background} introduce il contesto tecnologico — lo sviluppo full stack monolinguaggio, Kotlin Multiplatform e lo standard \ac{fmi} — fornendo le basi necessarie alla comprensione delle scelte progettuali. Il Capitolo~\ref{chap:analisi} descrive il modello di dominio e i vincoli di progetto. Il Capitolo~\ref{chap:design} presenta le scelte architetturali e di design. Il Capitolo~\ref{chap:implementazione} approfondisce gli aspetti implementativi più rilevanti. Il Capitolo~\ref{chap:valutazione} descrive la strategia di testing e la copertura multipiattaforma. Il Capitolo~\ref{chap:conclusioni} chiude il lavoro con una discussione delle limitazioni e degli sviluppi futuri.

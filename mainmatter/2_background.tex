@@ -1,8 +1,8 @@
-\chapter{Background}
+\section{Background}
 \label{chap:background}
 
 
-\section{Sviluppo di applicazioni full stack monolinguaggio}
+\subsection{Sviluppo di applicazioni full stack monolinguaggio}
 \label{sec:background-fullstack}
 Prima di addentrarci nella descrizione del background del progetto è importante definire in maniera corretta cosa sono le applicazioni \textbf{full stack} e le differenze che emergono tra lo sviluppo di esse e quello di applicazioni più tradizionali.
 Le componenti delle applicazioni vengono divise in due macrocategorie
@@ -25,7 +25,7 @@ In seguito verranno discusse in dettaglio le soluzioni esistenti per la programm
 tale tipo di applicativi e i loro limiti, per poi analizzare il problema della portabilità e
 dell'integrazione con le librerie native.
 
-\subsection{Panoramica delle soluzioni esistenti e loro limiti}
+\subsubsection{Panoramica delle soluzioni esistenti e loro limiti}
 \label{subsec:background-fullstack-soluzioni}
 Come anticipato in precedenza, esistono diversi linguaggi impiegati per la programmazione di app \textit{full stack} monolinguaggio.
 Il più popolare attualmente risulta essere JavaScript\footnote{\href{https://survey.stackoverflow.co/2025/technology/}{Survey realizzato da Stack Overflow delle tecnlogie più utilizzate nel 2025.}}, questo per via dello sviluppo della tecnologia \textbf{Node.js}; infatti questo permette di portare l'ambiente di esecuzione di JavaScript fuori dai browser web.
@@ -41,7 +41,7 @@ Nonostante il grande supporto in termini di librerie e framework per questo tipo
 %Altre opzioni per lo sviluppo \textit{full stack} le troviamo ad esempio anche con Python, che al contrario di Node.js presenta varie soluzioni per interagire con il nativo, approccio però che aumenta la frammentazione e spesso coinvolge la scrittura di codice in altri linguaggi per la compilazione nativa, oppure scrittura di codice per tradurre le API a Python.
 
 
-\subsection{Portabilità e integrazione con librerie native}
+\subsubsection{Portabilità e integrazione con librerie native}
 \label{subsec:background-fullstack-gap}
 Per librerie native si in intendono tutte le librerie compilate in linguaggio macchina specifico per un architettura. Queste espongono delle \textbf{\ac{abi}} ovvero delle interfacce applicative che comunicano direttamente con il sistema operativo a livello di linguaggio macchina.
 Tra i linguaggi che vengono compilati in codice macchina figurano, C, C++, Rust e Zig; questi spesso vengono utilizzati per la realizzazione di programmi che hanno necessità di accedere direttamente all'hardware sottostante, oppure per sviluppare librerie che implementano alcuni standard. Quest'ultimo caso è il più rilevante per la tesi, infatti l'applicativo realizzato per questa tesi interagisce con dei file aderenti allo standard \ac{fmi}, il quale verrà approfondito in seguito nella sezione dedicata.
@@ -54,12 +54,12 @@ Le soluzioni legate a questi linguaggi dunque richiedono di violare il principio
 Questo limite non dipende da aspetti implementativi risolvibili con nuove librerie, bensì una conseguenza strutturale basata sulla natura del linguaggio scelto.
 Dunque una reale soluzione richiederebbe un approccio diverso fin dalla scelta del linguaggio, rendendo necessario l'impiego di un linguaggio \textbf{multitarget}.
 
-\section{Kotlin e framework multitarget come\\risposta al gap}
+\subsection{Kotlin e framework multitarget come risposta al gap}
 \label{sec:background-multitarget}
 
 Alla luce delle limitazioni analizzate nella sezione precedente — in particolare la difficoltà di integrare librerie native C in ambienti JavaScript e la necessità di ricorrere a strati di collante eterolinguistici — questa sezione presenta Kotlin Multiplatform come risposta tecnologicamente motivata a tale gap. L'obiettivo non è descrivere la tecnologia e il suo funzionamento in modo esaustivo, ma illustrare perché le sue caratteristiche architetturali si adattano al problema in esame.
 
-\subsection{Kotlin Multiplatform}
+\subsubsection{Kotlin Multiplatform}
 \label{subsec:background-kmp}
 
 Kotlin nasce nel 2011 come linguaggio sviluppato da JetBrains con l'obiettivo di modernizzare lo sviluppo sulla \ac{jvm}: sintassi più concisa, sistema di tipi con null safety integrata e piena interoperabilità con Java~\cite{akhin2020kotlin}. La maturità dell'ecosistema e il supporto di JetBrains — nonché l'adozione ufficiale da parte di Google come linguaggio primario per lo sviluppo Android — ne hanno consolidato la credibilità come linguaggio di produzione.
@@ -79,12 +79,12 @@ Il confronto con Node-API, descritta nella sezione precedente, è diretto. Con N
 
 Vale la pena segnalare un limite architetturale rilevante: \texttt{cinterop} è disponibile esclusivamente nel target Kotlin/Native. Il codice che utilizza collegamenti generati da \texttt{cinterop} non può quindi risiedere nel modulo \texttt{commonMain} di un progetto KMP, ma deve essere collocato nel modulo nativo specifico. In pratica, questo significa che le chiamate dirette alle librerie C costituiscono un'implementazione \texttt{actual} nel modulo nativo, mentre l'interfaccia esposta al codice comune viene dichiarata tramite la corrispondente dichiarazione \texttt{expect}. Non si tratta di una limitazione bloccante, ma di un vincolo di design che influenza la struttura del progetto e che verrà ripreso nella descrizione architetturale nei capitoli successivi.
 
-\section{Lo standard FMI e il formato FMU}
+\subsection{Lo standard FMI e il formato FMU}
 \label{sec:background-fmi}
 
 La simulazione di sistemi dinamici complessi richiede spesso l'integrazione di componenti provenienti da strumenti e ambienti di sviluppo eterogenei. Lo standard \ac{fmi} nasce proprio per rispondere a questa esigenza, definendo un'interfaccia comune che consente lo scambio e l'esecuzione di modelli di simulazione indipendentemente dallo strumento con cui sono stati prodotti. Questa sezione si occupa dunque di presentare lo standard e il formato archivistico con cui viene condiviso, con l'obiettivo di fornire il contesto necessario a comprendere le scelte progettuali descritte nei capitoli successivi.
 
-\subsection{Functional Mock-up Interface (FMI 2.0)}
+\subsubsection{Functional Mock-up Interface (FMI 2.0)}
 \label{subsec:background-fmi-standard}
 
 \ac{fmi} è uno standard aperto che definisce un'interfaccia C e un formato di impacchettamento per lo scambio di modelli di simulazione dinamica tra strumenti diversi. Lo sviluppo dello standard è stato coordinato da Daimler AG — che ora prende il nome di Mercedes-Benz Group AG — nell'ambito del progetto europeo ITEA2 MODELISAR con l'obiettivo di semplificare lo scambio di modelli di simulazione tra fornitori e case automobilistiche. La versione 1.0 è stata pubblicata nel 2010; la versione 2.0, che è quella rilevante per questo progetto, è stata rilasciata nel 2014 e ha raggiunto una diffusione molto ampia, con supporto da parte di oltre 280 strumenti di simulazione\footnote{\href{https://fmi-standard.org}{Sito ufficiale dello standard \ac{fmi}.}}.
@@ -101,7 +101,7 @@ Lo standard definisce due modalità operative distinte, che determinano come il 
 
 L'interfaccia C esposta dall'\ac{fmu} segue una convenzione di denominazione prefissata: le funzioni hanno nomi nella forma \texttt{fmi2<NomeFunzione>}~\cite{fmi2_spec}, dove il prefisso \texttt{fmi2} identifica la versione dello standard. Il ciclo di vita di un'istanza \ac{fmu} prevede fasi distinte — istanziamento, inizializzazione, simulazione, terminazione — ciascuna governata da specifiche chiamate di funzione. Questo contratto è ciò che garantisce la portabilità: qualunque strumento che rispetti la sequenza di chiamata prescritta dallo standard può utilizzare correttamente qualsiasi \ac{fmu} conforme.
 
-\subsection{Struttura di un file FMU e modalità operative}
+\subsubsection{Struttura di un file FMU e modalità operative}
 \label{subsec:background-fmu-struttura}
 
 Un file \ac{fmu} è fisicamente un archivio ZIP rinominato con estensione \texttt{.fmu}.\\La struttura interna è standardizzata e prevede i seguenti componenti principali~\cite{fmi2_spec}:
