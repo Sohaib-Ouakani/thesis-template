@@ -4,13 +4,13 @@
 % Max 2000 caratteri. Struttura consigliata: Contesto, Problema/Obiettivi, Metodi/Contributo, Risultati, Conclusioni.
 In contesti industriali legati a ingegneria e simulazione, lo stack software è spesso eterogeneo: le librerie che implementano standard tecnici sono scritte in C o C++, mentre i componenti applicativi di alto livello usano linguaggi diversi, causando duplicazione di codice e costi di manutenzione crescenti.
 
-Questa tesi affronta tale problema progettando e sviluppando un applicativo full stack realizzato interamente in Kotlin per la gestione e la simulazione di file FMU (Functional Mock-up Unit), il formato standard FMI per l'interscambio di modelli di simulazione, integrando la libreria nativa FMILib scritta in C.
+Questa tesi affronta tale problema progettando e sviluppando un applicativo full stack realizzato interamente in Kotlin per la gestione e la simulazione di modelli nel formato FMU (Functional Mock-up Unit), definito dallo standard FMI (Functional Mock-up Interface) per l'interscambio di modelli di simulazione, integrando la libreria nativa FMILib scritta in C.
 
 Il sistema adotta un'architettura client-server modulare: un nucleo di logica di dominio per il ciclo di vita degli FMU, un backend che espone le funzionalità tramite API REST, e un frontend Compose Multiplatform per configurare simulazioni e visualizzarne i risultati. L'interoperabilità con FMILib è realizzata tramite cinterop di Kotlin/Native, mentre Kotlin Multiplatform condivide la logica applicativa tra Linux x64, macOS ARM64 e Windows x64, producendo eseguibili nativi autonomi. Per macOS ARM64 è stata sviluppata una pipeline che ricompila gli FMU privi di binari per Apple Silicon a partire dai sorgenti C distribuiti.
 
 Il sistema è stato validato tramite test unitari e di integrazione eseguiti su tutte le piattaforme target in una pipeline di integrazione continua, confermando la correttezza funzionale e la portabilità del sistema.
 
-Il lavoro dimostra la fattibilità di un approccio monolinguaggio per applicativi che interagiscono con librerie native, evidenziando anche i limiti attuali dell'ecosiste\-ma Kotlin/Native che ne condizionano la maturità per un'adozione industriale più ampia.
+Il lavoro dimostra la fattibilità di un approccio monolinguaggio per applicativi che interagiscono con librerie native, evidenziando anche i limiti attuali dell'eco\-sistema Kotlin/Native che ne condizionano la maturità per un'adozione industriale più ampia.
 \end{abstract}
 
 \begin{dedication}
