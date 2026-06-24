@@ -19,6 +19,8 @@ Gli sviluppi futuri più naturali del progetto seguono direttamente le limitazio
 
 L'aggiunta di una funzione di esportazione dei risultati in formato CSV o JSON rappresenta invece uno sviluppo ad alto impatto pratico, che renderebbe il sistema più utile in contesti di ricerca e analisi dove i dati di simulazione devono essere elaborati con strumenti esterni.
 
+Un'ulteriore direzione di sviluppo riguarda il vincolo per cui il sistema gestisce un solo modello \ac{fmu} alla volta. Questa scelta semplifica il modello del dominio e l'architettura, permettendo di focalizzarsi sullo sviluppo di un prototipo che permetta l'utilizzo esclusivo di Kotlin Multiplatform, ma esclude scenari in cui sia necessario co-simulare più componenti contemporaneamente. Nell'ecosistema degli strumenti \textit{software} costruiti attorno lo standard \ac{fmi} esistono soluzioni proprio pensate a questo scopo: FIDE\cite{DBLP:conf/sac/CremonaLTBL16}, ad esempio, è un ambiente di sviluppo che permette di disporre graficamente una collezione di modelli \ac{fmu} e di generare un eseguibile che ne co-simula l'insieme tramite un algoritmo dedicato. Estendere il sistema descritto in questa tesi in tale direzione richiederebbe l'introduzione di un componente che si occupi di orchestrare più \texttt{FmuManager} contemporaneamente, sincronizzando le simulazioni e gestendo il flusso di dati prodotto dai modelli --- queste funzionalità tuttavia esula dagli obiettivi originari del progetto ma rappresenta un'interessante estensione naturale dell'architettura attuale.
+
 \section{Conclusioni}
 \label{sec:conclusioni-conclusioni}
 
