@@ -14,7 +14,7 @@ Le componenti delle applicazioni vengono divise in due macrocategorie
     all'esecuzione delle funzionalità dell'applicazione, inclusa l'elaborazione dei dati, la loro
     memorizzazione e la comunicazione con altre applicazioni se necessario. 
 \end{itemize}
-Le applicazioni \textit{full stack} dunque, comprendono entrambe le componenti.
+Le applicazioni full stack dunque, comprendono entrambe le componenti.
 Lo sviluppo di questo tipo di applicazioni può includere l'utilizzo di molteplici linguaggi in base alle necessità, impiegando linguaggi progettati per lo sviluppo del backend e altri per il frontend.
 %%%%
 Questa tipologia di sviluppo rientra nella definizione di sviluppo \textit{poliglotta}, dove per poliglotta si definiscono i processi con uno o più compiti che richiedono attivamente la modifica di artefatti utilizzando più di un linguaggio~\cite{DBLP:journals/software/MussbacherCKBGJJKMPSSS24}. Di fatto tale strategia di sviluppo risulta essere la più adottata al giorno d'oggi: uno studio condotto su 139 sviluppatori professionisti riporta una media di sette linguaggi per progetto, con oltre il 90\% degli intervistati che riporta di avere problemi legati all'interazione tra linguaggi~\cite{DBLP:journals/jserd/MayerKL17}. 
@@ -22,23 +22,23 @@ Questa tipologia di sviluppo rientra nella definizione di sviluppo \textit{polig
 %%%%
 Tuttavia la distinzione tra linguaggi per \textit{frontend} e quelli per il \textit{backend} al giorno d'oggi viene gradualmente persa, infatti diversi linguaggi inizialmente progettati per l'utilizzo in una sola area, vengono poi estesi anche all'altra.
 L'esempio più rilevante e dominante al giorno d'oggi è \textbf{JavaScript}, il quale inizialmente nasce come linguaggio per i browser, quindi dedicato al \textit{frontend}, per poi evolversi oltre i confini del browser permettendone l'esecuzione anche sui server. 
-Questo permette dunque la creazione di applicativi \textit{full stack} monolinguaggio, una tendenza sempre più diffusa.
+Questo permette dunque la creazione di applicativi full stack monolinguaggio, una tendenza sempre più diffusa.
 %%%%
 Il vantaggio principale che questo comporta è l'utilizzo di un solo linguaggio per tutto lo stack, il quale porta a una minore curva di apprendimento e una maggiore efficienza per quanto riguarda l'impiego di programmatori. Infatti l'utilizzo di più linguaggi e il conseguente cambio di contesto tra essi ha un impatto non solo in termini economici, ma anche rispetto all'efficienza dei programmatori. Il costo cognitivo che deriva dal cambiare linguaggio utilizzato è noto in linguistica, dove è stato misurato un costo temporale nel passare da una 
 lingua naturale a un'altra durante la comprensione.
 Un primo studio pilota ha indagato se un costo analogo sia misurabile anche nel passaggio tra linguaggi di programmazione nello stesso compito di sviluppo, sebbene i risultati ottenuti su un campione ridotto non abbiano permesso di confermare un effetto statisticamente significativo, lo studio lascia la questione aperta per future ricerche su scala maggiore~\cite{DBLP:conf/oopsla/UesbeckS18}.
 %%%%
-Uno dei più grandi limiti dello sviluppo \textit{full stack} monolinguaggio è l'interazione con librerie e \ac{api} native, infatti linguaggi come JavaScript sono noti per avere meccanismi limitati o comunque ostici per interagire con le librerie native, i quali saranno poi definiti nella sezione \ref{subsec:background-fullstack-gap}.
+Uno dei più grandi limiti dello sviluppo full stack monolinguaggio è l'interazione con librerie e \ac{api} native, infatti linguaggi come JavaScript sono noti per avere meccanismi limitati o comunque ostici per interagire con le librerie native, i quali saranno poi definiti nella sezione \ref{subsec:background-fullstack-gap}.
 In seguito verranno discusse in dettaglio le soluzioni esistenti per la programmazione di
 tale tipo di applicativi e i loro limiti, per poi analizzare il problema della portabilità e
 dell'integrazione con le librerie native.
 
 \subsubsection{Panoramica delle soluzioni esistenti e loro limiti}
 \label{subsec:background-fullstack-soluzioni}
-Come anticipato in precedenza, esistono diversi linguaggi impiegati per la programmazione di app \textit{full stack} monolinguaggio.
+Come anticipato in precedenza, esistono diversi linguaggi impiegati per la programmazione di app full stack monolinguaggio.
 Il più popolare attualmente risulta essere JavaScript\footnote{\href{https://survey.stackoverflow.co/2025/technology/}{Survey realizzato da Stack Overflow delle tecnlogie più utilizzate nel 2025.}}, questo per via dello sviluppo della tecnologia \textbf{Node.js}; infatti questo permette di portare l'ambiente di esecuzione di JavaScript fuori dai browser web.
 Inoltre anche la creazione di TypeScript, una diretta evoluzione di JavaScript, sta contribuendo alla crescita di questo tipo di linguaggi.
-Tutti questi fattori rendono JavaScript una delle scelte più gettonate per la creazione di software \textit{full stack}, impiegando diversi stack come Next.js, framework sviluppato da Vercel, e lo stack MEAN, il quale consiste in Mongo DB, Express.js e Angular come framework per il backend e frontend rispettivamente, il tutto legato da Node.js.
+Tutti questi fattori rendono JavaScript una delle scelte più gettonate per la creazione di software full stack, impiegando diversi stack come Next.js, framework sviluppato da Vercel, e lo stack MEAN, il quale consiste in Mongo DB, Express.js e Angular come framework per il backend e frontend rispettivamente, il tutto legato da Node.js.
 Nonostante il grande supporto in termini di librerie e framework per questo tipo di tecnologia, l'integrazione con le librerie native risulta comunque ardua per via delle peculiarità del linguaggio.
 
 %Esistono anche soluzioni basate su linguaggi eseguiti su \textit{Java Virtual Machine}, come Java e Kotlin. Per questi esistono framework maturi sia per il backend, come Ktor, che per il frontend, come Vaadin. Tuttavia queste soluzioni rimangono legate all'ecosistema \ac{jvm}, il che pone vincoli sulla portabilità verso alcune piattaforme target.
@@ -60,7 +60,7 @@ Nel caso più rilevante, ovvero JavaScript, se si necessita di interagire con li
 È proprio questo aspetto di interfacciamento con altri linguaggi che rappresenta la difficoltà più importante affrontata dagli sviluppatori \textit{multilinguaggio}. Altri ostacoli sono spesso rappresentati dalla difficoltà di elaborazione dei dati tra diversi linguaggi e l'integrazione tra essi e la difficoltà nel processo di \textit{building}~\cite{DBLP:conf/icse/YangLWC23}.
 %%%%
 La soluzione presentata per JavaScript permette dunque l'integrazione con le librerie native, ma contraddice direttamente il principio dietro lo sviluppo \textit{full stack monolinguaggio}, rendendo necessaria la scrittura di codice in linguaggi al di fuori di quello scelto per la realizzazione dell'applicativo.
-Da questa analisi emerge un pattern ricorrente: le soluzioni \textit{full stack monolinguaggio} più mature non sono state costruite attorno all'interoperabilità nativa come requisito principale.
+Da questa analisi emerge un pattern ricorrente: le soluzioni full stack monolinguaggio più mature non sono state costruite attorno all'interoperabilità nativa come requisito principale.
 Le soluzioni legate a questi linguaggi dunque richiedono di violare il principio del monolinguaggio per interagire con le librerie native.
 Questo limite non dipende da aspetti implementativi risolvibili con nuove librerie, bensì una conseguenza strutturale basata sulla natura del linguaggio scelto.
 Dunque una reale soluzione richiederebbe un approccio diverso fin dalla scelta del linguaggio, rendendo necessario l'impiego di un linguaggio \textbf{multitarget}.
