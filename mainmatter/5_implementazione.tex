@@ -123,8 +123,22 @@ Il backend è implementato tramite il framework Ktor con un server \ac{cio}, sce
 \section{Implementazione frontend}
 \label{sec:impl-frontend}
 
-Il frontend Web è implementato con Compose Multiplatform\footnote{\href{https://kotlinlang.org/compose-multiplatform/}{Pagina Web ufficaile di Compose Multiplatform.}}, il framework di JetBrains che porta il modello di \ac{ui} dichiarativa di Jetpack Compose al di fuori dell'ecosistema Android, consentendo di definire l'interfaccia utente in Kotlin anche tra piattaforme diverse. La navigazione tra le schermate è gestita tramite la libreria \texttt{Voyager}\footnote{\href{https://voyager.adriel.cafe/}{Documentazione della libreria \texttt{Voyager}.}}, che integra il concetto di \texttt{Screen} direttamente nel modello a componenti di Compose: ciascuna schermata implementa l'interfaccia \texttt{Screen} e definisce il proprio contenuto nel metodo \texttt{Content()}, mentre il \texttt{Navigator} di Voyager gestisce lo stack di navigazione e le transizioni. Il punto di ingresso dell'applicazione istanzia il \texttt{Navigator} con \texttt{HomeScreen} come schermata iniziale.
+Il frontend Web è implementato con Compose Multiplatform\footnote{\href{https://kotlinlang.org/compose-multiplatform/}{Pagina Web ufficaile di Compose Multiplatform.}}, il framework di JetBrains che porta il modello di \ac{ui} dichiarativa di Jetpack Compose al di fuori dell'ecosistema Android, consentendo di definire l'interfaccia utente in Kotlin anche tra piattaforme diverse. La navigazione tra le schermate è gestita tramite la libreria \texttt{Voyager}\footnote{\href{https://voyager.adriel.cafe/}{Documentazione della libreria \texttt{Voyager}.}}, che integra il concetto di \texttt{Screen} direttamente nel modello a componenti di Compose: ciascuna schermata implementa l'interfaccia \texttt{Screen} e definisce il proprio contenuto nel metodo \texttt{Content()}, mentre il \texttt{Navigator} di Voyager gestisce lo stack di navigazione e le transizioni. Il punto di ingresso dell'applicazione istanzia il \texttt{Navigator} con \texttt{HomeScreen} come schermata iniziale. La figura \ref{fig:homescreen} mostra l'aspetto della schermata iniziale dalla quale si possono caricare i modelli.
 
-La visualizzazione dei risultati di simulazione nella \texttt{ChartScreen} è realizzata tramite la libreria \texttt{KoalaPlot}\footnote{\href{https://github.com/KoalaPlot/koalaplot-core}{Pagina GitHub della libreria \texttt{KoalaPlot}.}}, che fornisce componenti Compose Multiplatform per la produzione di grafici. Per ciascuna variabile campionata viene prodotta una serie temporale, rappresentata come \texttt{LinePlot} con un colore distinto estratto da una palette predefinita. Gli assi del grafico vengono configurati dinamicamente in base ai valori effettivi dei dati, con un padding verticale proporzionale all'intervallo dei valori per evitare che le serie tocchino i bordi del grafico.
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figures/home-screen.png}
+    \caption{Interfaccia di caricamento del file \ac{fmu} (\texttt{HomeScreen}).}
+    \label{fig:homescreen}
+\end{figure}
+
+La visualizzazione dei risultati di simulazione nella \texttt{ChartScreen} è realizzata tramite la libreria \texttt{KoalaPlot}\footnote{\href{https://github.com/KoalaPlot/koalaplot-core}{Pagina GitHub della libreria \texttt{KoalaPlot}.}}, che fornisce componenti Compose Multiplatform per la produzione di grafici. Per ciascuna variabile campionata viene prodotta una serie temporale, rappresentata come \texttt{LinePlot} con un colore distinto estratto da una palette predefinita. Gli assi del grafico vengono configurati dinamicamente in base ai valori effettivi dei dati, con un padding verticale proporzionale all'intervallo dei valori per evitare che le serie tocchino i bordi del grafico. Il risultato ottenuto è raffigurato nella figura \ref{fig:chartscreen}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figures/chart-screen.png}
+    \caption{Interfaccia di visualizzazione dei risultati (\texttt{ChartScreen}).}
+    \label{fig:chartscreen}
+\end{figure}
 
 La selezione del file \ac{fmu} da caricare è gestita tramite la libreria \texttt{FileKit}\footnote{\href{https://filekit.mintlify.app/introduction}{Docmentazione della libreria \texttt{FileKit}}}, che astrae le \ac{api} native di apertura file delle diverse piattaforme esponendo un'interfaccia Compose Multiplatform unificata. Questo consente alla \texttt{HomeScreen} di aprire il file picker nativo del sistema operativo e ottenere il file selezionato come \texttt{PlatformFile}, indipendentemente dalla piattaforma su cui il frontend è in esecuzione, per poi passarne il contenuto al modulo client per l'upload al backend.
