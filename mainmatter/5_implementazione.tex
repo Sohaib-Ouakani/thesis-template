@@ -25,7 +25,14 @@ Un FMU è distribuito come archivio ZIP con estensione \texttt{.fmu}, contenente
 
 Una volta estratto il contenuto, FMILib costruisce un contesto \ac{fmi}: una struttura opaca che rappresenta lo stato interno della sessione nella libreria, per poi procedere all'analisi del file \texttt{modelDescription.xml}. Da questo file vengono estratti tutti i metadati del modello: nome, autore, versione, tipo di \ac{fmu} (\ac{me}, \ac{cs} o entrambi), i parametri predefiniti dell'esperimento e l'elenco delle variabili disponibili. Il risultato del parsing è una struttura dati interna a FMILib, referenziata tramite un puntatore opaco di tipo \texttt{fmi2\_import\_t}, che viene mantenuta per tutta la durata della sessione e liberata esplicitamente alla chiusura.
 
-Il passo successivo è il caricamento del binario nativo del modello: FMILib individua la libreria condivisa appropriata per la piattaforma corrente all'interno dell'archivio estratto e la carica dinamicamente tramite le API del sistema operativo. Questo passaggio può fallire se il binario non è presente o non è compatibile con la piattaforma — caso che si presenta, ad esempio, su macOS ARM64 con FMU che distribuiscono solo binari x86\_64, e che viene gestito tramite la ricompilazione descritta nella Sezione~\ref{sec:impl-macos}.
+Il passo successivo è il caricamento del binario nativo del modello: FMILib individua la libreria condivisa appropriata per la piattaforma corrente all'interno dell'archivio estratto e la carica dinamicamente tramite le API del sistema operativo. Questo passaggio può fallire se il binario non è presente o non è compatibile con la piattaforma — caso che si presenta, ad esempio, su macOS ARM64 con FMU che distribuiscono solo binari x86\_64, e che viene gestito tramite la ricompilazione descritta nella Sezione~\ref{sec:impl-macos}. La figura \ref{fig:fmi lifecycle} riassume la sequenza di chiamate appena descritta.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figures/lifecycle.png}
+    \caption{Diagramma rappresentante il processo di inizializzazione del ciclo di vita del file \ac{fmu}.}
+    \label{fig:fmi lifecycle}
+\end{figure}
 
 Il ciclo di vita del modello si chiude con una fase di terminazione altrettanto esplicita: alla chiusura, il binario viene scaricato, la struttura FMI liberata e il contesto deallocato. Questa sequenza è incapsulata in \texttt{FmuLifecycleManager}, che implementa \texttt{AutoCloseable} per garantire che le risorse native vengano sempre rilasciate correttamente, anche in presenza di eccezioni.
 
