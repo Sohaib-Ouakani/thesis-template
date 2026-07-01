@@ -8,7 +8,7 @@ Il sistema è strutturato secondo un'architettura client-server a tre livelli --
 
 Il modulo \texttt{fmilib} costituisce la base della catena di dipendenze: si occupa della compilazione della libreria nativa \emph{FMILib}\footnote{\href{https://github.com/modelon-community/fmi-library}{GitHub contenente il codice della libreria FMILib.}} e ne espone gli artefatti (header C e librerie condivise) agli strati superiori. La scelta di rendere questo modulo indipendente isola completamente la toolchain di compilazione dal resto del progetto Kotlin, rendendo il confine tra codice nativo e codice multipiattaforma esplicito e controllato.
 
-Il modulo \texttt{fmu-kt} costituisce il cuore della logica di dominio. Dipende da \texttt{fmilib} e si occupa di tutto ciò che riguarda il ciclo di vita degli FMU: caricamento del file, parsing dell'XML descrittivo, invocazione della libreria nativa per l'esecuzione della simulazione, e restituzione dei risultati. Il modulo è compilato come libreria Kotlin Multiplatform per le piattaforme native (Linux x64, macOS ARM64 e Windows x64), consentendo di riutilizzare la logica comune tra le piattaforme e di isolare, nei codici sorgente specifici, le parti che richiedono comportamenti differenziati: in particolare la fase di preelaborazione degli FMU su macOS ARM, che richiede la ricompilazione del modello.
+Il modulo \texttt{fmu-kt} costituisce il cuore della logica di dominio. Dipende da \texttt{fmilib} e si occupa di tutto ciò che riguarda il ciclo di vita degli FMU: caricamento del file, parsing dell'XML descrittivo, invocazione della libreria nativa per l'esecuzione della simulazione, e restituzione dei risultati. Il modulo è compilato come libreria Kotlin Multiplatform per le piattaforme native (Linux x64, macOS ARM64 e Windows x64), consentendo di riutilizzare la logica comune tra le piattaforme e di isolare, nei codici sorgente specifici, le parti che richiedono comportamenti differenziati: in particolare la fase di preelaborazione degli FMU su macOS ARM64, che richiede la ricompilazione del modello.
 
 Il modulo \texttt{backend} implementa un server HTTP REST che espone le funzionalità di \texttt{fmu-kt} come API consumabile dal frontend, è anch'esso un modulo Kotlin Multiplatform con target nativi. Il server espone endpoint per il caricamento del file FMU, l'inizializzazione, la lettura dei metadati e l'esecuzione della simulazione.
 
@@ -18,7 +18,7 @@ Questa catena di interazioni è rappresentata nella figura \ref{fig:architettura
 \begin{figure}[h]
   \centering
   \includegraphics[width=\textwidth]{figures/diagramma-tirocinio.png}
-  \caption{Diagramma rappresentante relazione tra i moduli dell'applicativo.}
+  \caption{Diagramma rappresentante la relazione tra i moduli dell'applicativo.}
   \label{fig:architettura}
 \end{figure}
 
@@ -72,7 +72,7 @@ Il backend è strutturato in modo da separare nettamente la definizione delle ro
   \item \textbf{ResourceManagerService}: è l'interfaccia che definisce le operazioni di gestione del filesystem locale, in particolare del salvataggio del file FMU ricevuto dal client e della restituzione dei percorsi necessari al caricamento del modello. Isolare questa responsabilità in un componente dedicato rende esplicito il confine tra la gestione delle risorse persistenti e la logica di interazione con il modello, e semplifica la sostituzione della strategia di memorizzazione, ad esempio in fase di test.
   \item \textbf{FmuService}: è l'interfaccia del modulo \texttt{fmu-kt} descritta nella sezione precedente. Il backend non dipende da nessun dettaglio interno di quel modulo: conosce solo le operazioni che il servizio espone, mantenendo il disaccoppiamento tra i due moduli.
 \end{itemize}
-Il diagramma dei componenti appena elencati e raffigurato nella figura~\ref{fig:design requesthandler}.
+Il diagramma dei componenti appena elencati è raffigurato nella figura~\ref{fig:design requesthandler}.
 
 \begin{figure}
     \centering
@@ -81,7 +81,7 @@ Il diagramma dei componenti appena elencati e raffigurato nella figura~\ref{fig:
     \label{fig:design requesthandler}
 \end{figure}
 
-Questa composizione rispecchia il flusso naturale di una richiesta: quando il client avvia una simulazione, \texttt{RequestHandler} gestisce il caricamento del file, che viene salvato dal \texttt{ResourceManagerService} e successivamente fornito a\\\texttt{FmuService} per il caricamento e l'esecuzione del modello. Le due responsabilità -- dove si trova il file e cosa farne -- restano separate e intercambiabili indipendentemente. La scelta far dipendere \texttt{RequestHandler} da un'interfaccia piuttosto che a una classe, per quanto riguarda la gestione del filesystem, è motivata dalla volontà di astrarre l'organizzazione interna dei file, permettendo così di realizzare un sistema di salvataggio organizzato in modo diverso senza intaccare in alcun modo il \texttt{RequestHandler}.
+Questa composizione rispecchia il flusso naturale di una richiesta: quando il client avvia una simulazione, \texttt{RequestHandler} gestisce il caricamento del file, che viene salvato dal \texttt{ResourceManagerService} e successivamente fornito a\\\texttt{FmuService} per il caricamento e l'esecuzione del modello. Le due responsabilità -- dove si trova il file e cosa farne -- restano separate e intercambiabili indipendentemente. La scelta di far dipendere \texttt{RequestHandler} da un'interfaccia piuttosto che da una classe, per quanto riguarda la gestione del filesystem, è motivata dalla volontà di astrarre l'organizzazione interna dei file, permettendo così di realizzare un sistema di salvataggio organizzato in modo diverso senza intaccare in alcun modo il \texttt{RequestHandler}.
 
 \subsection{Frontend multipiattaforma}
 \label{subsec:design-frontend}
